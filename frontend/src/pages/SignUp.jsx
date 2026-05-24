@@ -1,10 +1,14 @@
 import React, { useState } from 'react'
 import { FaArrowLeft, FaUserCircle } from "react-icons/fa";
-import logo from "../assets/playtube1.png"
+import logo from "../assets/CreatorOS.png"
+import { useNavigate } from 'react-router-dom';
+import axios from "axios"
+import {serverUrl} from '../App';
+import{ClipLoader} from "react-spinner"
 
 function SignUp() {
 
-  const [step, setStep] = useState(3)
+  const [step, setStep] = useState(1)
 
   const [userName, setUserName] = useState("")
   const [email, setEmail] = useState("")
@@ -13,6 +17,63 @@ function SignUp() {
   const [confirmPassword, setConfirmPassword] = useState("")
 
   const [showPassword, setShowPassword] = useState(false)
+  const [backendImage, setBackendImage] = useState(null)
+  const [frontendImage, setFrontendImage] = useState(null)
+  const [loading,setLoading] = useState(false)
+
+  const navigate = useNavigate()
+
+  const handleNext = ()=>{
+    if(step == 1){
+      if(!userName || !email){
+      alert("Fill all the fields")
+      return
+    }
+  }
+  
+  if(step == 2){
+    if(!password || !confirmPassword){
+      alert("Fill all the Fields")
+      return
+    }
+    if(password !== confirmPassword){
+      alert("Password doesn't match")
+      return
+    }
+  }
+    setStep(step+1)
+  }
+
+  const handleImage = (e)=>{
+    const file = e.target.files[0]
+    setBackendImage(file);
+    setFrontendImage(URL.createObjectURL(file))
+  }
+
+const handleSignUp = async () =>{
+  if(!backendImage){
+    alert("Please choose profileImage")
+    return
+  }
+  setLoading(true)
+  const formData = new FormData
+  formData.append("userName",userName)
+  formData.append("email",email)
+  formData.append("password",password)
+  formData.append("photoUrl",backendImage)
+  try {
+    const result = await axios.post(serverUrl + "/api/auth/signup", formData, {withCredentials:true})
+    console.log(result.data)
+    setLoading(false)
+    navigate("/")
+    
+    
+  } catch (error) {
+    console.log(error)
+    setLoading(false)
+    
+  }
+}
 
   return (
 
@@ -25,8 +86,17 @@ function SignUp() {
 
           <button
             className='text-gray-300 mr-3 hover:text-white'
-            onClick={() => step > 1 && setStep(step - 1)}
-          >
+            onClick={() => {
+              if(step > 1){
+
+               setStep(step - 1)
+              } else{
+                navigate("/")
+
+
+              }
+            }}>
+
             <FaArrowLeft size={20} />
           </button>
 
@@ -71,9 +141,9 @@ function SignUp() {
             <div className='flex justify-end mt-10'>
 
               <button
-                className='bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-full'
-                onClick={() => setStep(2)}
-              >
+                className='bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-full' 
+                onClick={handleNext}
+               >
                 Next
               </button>
 
@@ -152,6 +222,7 @@ function SignUp() {
 
               <button
                 className='bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-full'
+                onClick={handleNext}
               >
                 Next
               </button>
@@ -179,20 +250,24 @@ function SignUp() {
 
           <div className='flex items-center gap-6 mb-6'>
             <div className='w-28 h-28 rounded-full border-4 border-gray-500 overflow-hidden shadow-lg'>
-              <FaUserCircle className='text-gray-500 w-full h-full p-2'/>
+              {
+                frontendImage ? <img src={frontendImage} className='w-full h-full object-cover'/>
+              
+
+              :<FaUserCircle className='text-gray-500 w-full h-full p-2'/>}
             </div>
             <div className='flex flex-col gap-2'>
               <label htmlFor="" className='text-grey-300 font-medium'>Choose Profile Picture</label>
-              <input type="file" accept='image/*' className='block w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-orange-600 file:text-white hover:file:bg-orange-700 cursor-pointer' />
+              <input type="file" accept='image/*' onChange={handleImage} className='block w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-orange-600 file:text-white hover:file:bg-orange-700 cursor-pointer' />
             </div>
           </div>
             {/* Submit Button */}
             <div className='flex justify-end mt-10'>
 
               <button
-                className='bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-full'
-              >
-                Next
+                className='bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-full'
+                onClick={handleSignUp} disabled={loading}>
+               {loading ? <ClipLoader color='black' size={20}/>:"Create Account"} 
               </button>
 
             </div>
