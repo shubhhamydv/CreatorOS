@@ -5,6 +5,7 @@ import Home from './pages/Home'
 import SignUp from './pages/SignUp'
 import SignIn from './pages/SignIn'
 import CustomAlert from './component/CustomAlert'
+import Shorts from './pages/Shorts/Shorts'
 
 export const serverUrl = "http://localhost:8000"
 
@@ -13,7 +14,11 @@ function App() {
     <>
     <CustomAlert/>
       <Routes>
-        <Route path='/' element={<Home />} />
+        <Route path='/' element={<Home />}>
+        <Route path = '/shorts' element={<Shorts/>}/> 
+        </Route> 
+        
+
         <Route path='/signup' element={<SignUp />} />
         <Route path='/signin' element={<SignIn />} />
       </Routes>
