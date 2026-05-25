@@ -4,11 +4,12 @@ import logo from "../assets/CreatorOS.png"
 import { useNavigate } from 'react-router-dom';
 import axios from "axios"
 import {serverUrl} from '../App';
-import{ClipLoader} from "react-spinner"
+import {ClipLoader} from 'react-spinners'
+import { showCustomAlert } from '../component/CustomAlert';
 
 function SignUp() {
 
-  const [step, setStep] = useState(1)
+  const [step, setStep] = useState(1) 
 
   const [userName, setUserName] = useState("")
   const [email, setEmail] = useState("")
@@ -26,18 +27,18 @@ function SignUp() {
   const handleNext = ()=>{
     if(step == 1){
       if(!userName || !email){
-      alert("Fill all the fields")
+      showCustomAlert("Fill all the fields")
       return
     }
   }
   
   if(step == 2){
     if(!password || !confirmPassword){
-      alert("Fill all the Fields")
+      showCustomAlert("Fill all the Fields")
       return
     }
     if(password !== confirmPassword){
-      alert("Password doesn't match")
+      showCustomAlert("Password doesn't match")
       return
     }
   }
@@ -52,26 +53,28 @@ function SignUp() {
 
 const handleSignUp = async () =>{
   if(!backendImage){
-    alert("Please choose profileImage")
+    showCustomAlert("Please choose a profile image")
     return
   }
+
   setLoading(true)
-  const formData = new FormData
-  formData.append("userName",userName)
-  formData.append("email",email)
-  formData.append("password",password)
-  formData.append("photoUrl",backendImage)
+  const formData = new FormData()
+  formData.append("userName", userName.trim())
+  formData.append("email", email.trim())
+  formData.append("password", password)
+  formData.append("photoUrl", backendImage)
+
   try {
     const result = await axios.post(serverUrl + "/api/auth/signup", formData, {withCredentials:true})
     console.log(result.data)
     setLoading(false)
+    showCustomAlert("Signup Successful")
     navigate("/")
-    
-    
   } catch (error) {
-    console.log(error)
     setLoading(false)
-    
+    const message = error?.response?.data?.message || error?.message || "Signup failed"
+    console.log("Signup error:", message)
+    showCustomAlert(message)
   }
 }
 
@@ -267,7 +270,7 @@ const handleSignUp = async () =>{
               <button
                 className='bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-full'
                 onClick={handleSignUp} disabled={loading}>
-               {loading ? <ClipLoader color='black' size={20}/>:"Create Account"} 
+               {loading ? "Creating Account..." : "Create Account"} 
               </button>
 
             </div>
