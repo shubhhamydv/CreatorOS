@@ -4,7 +4,7 @@ import logo from "../assets/CreatorOS.png"
 import { useNavigate } from 'react-router-dom';
 import axios from "axios"
 import {serverUrl} from '../App';
-import {ClipLoader} from 'react-spinners'
+import {ClipLoader} from 'react-spinner'
 import { showCustomAlert } from '../component/CustomAlert';
 
 function SignUp() {
@@ -73,8 +73,9 @@ const handleSignUp = async () =>{
   } catch (error) {
     setLoading(false)
     const message = error?.response?.data?.message || error?.message || "Signup failed"
+    setLoading(false)
     console.log("Signup error:", message)
-    showCustomAlert(message)
+    showCustomAlert(error.response.data.message)
   }
 }
 

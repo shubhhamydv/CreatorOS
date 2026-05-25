@@ -1,13 +1,60 @@
 import React, { useState } from 'react'
 import { FaArrowLeft, FaUserCircle } from "react-icons/fa";
 import logo from "../assets/CreatorOS.png"
+import { showCustomAlert } from '../component/CustomAlert';
+import { useNavigate } from "react-router-dom";
+import { serverUrl } from '../App';
+  import { ClipLoader } from 'react-spinners';
 
+import axios from 'axios';
 
 function SignIn() {
+   const navigate = useNavigate()
    const [step, setStep] = useState(1)
     const [email, setEmail] = useState("")
-  
     const [password, setPassword] = useState("")
+    const [showPassword,setShowPassword] = useState(false)
+    const [loading,setLoading] = useState(false)
+
+
+     const handleNext = ()=>{
+        if(step == 1){
+          if(!email){
+          showCustomAlert("Fill all the fields")
+          return
+        }
+      }
+      
+      if(step == 2){
+        if(!password){
+          showCustomAlert("Fill all the Fields")
+          return
+        }
+        
+      }
+        setStep(step+1)
+      }
+
+      const handleSignIn = async ()=>{
+        setLoading(true)
+        try {
+            
+          const result = await axios.post(serverUrl + "/api/auth/signin", { email, password }, { withCredentials: true })
+           console.log(result.data, "alert triggered")
+              setLoading(false)
+               showCustomAlert("User SignIn Successful")
+              setTimeout(() => navigate("/"), 2000)
+          
+        } catch (error) {
+          setLoading(false)
+          console.log("Full error:", error.response.data)
+          showCustomAlert(error.response.data.message || "Something went wrong")
+        }
+      }
+
+
+
+
   return (
      <div className='flex items-center justify-center min-h-screen bg-[#181818]'>
     
@@ -50,7 +97,7 @@ function SignIn() {
                   />
                   SignIn
                 </h1>
-             <p className=''> with your Account to continue to CreatorOS</p>
+             <p className='text-grey-400 text-sm mb-6'> with your Account to continue to CreatorOS</p>
                 {/* Username */}
                 
     
@@ -64,8 +111,8 @@ function SignIn() {
                 />
     
                 {/* Next Button */}
-                <div className='flex justify-end mt-10'>
-                  <button></button>
+                <div className='flex justify-between items-center mt-10'>
+                  <button className='text-orange-400 text-sm hover:underline' onClick={() => navigate("/signup")}>Create Account</button>
                   <button
                     className='bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-full' 
                     onClick={handleNext}
@@ -90,7 +137,7 @@ function SignIn() {
                     className='w-8 h-8'
                   />
     
-                  Security
+                  Welcome
     
                 </h1>
     
@@ -116,13 +163,13 @@ function SignIn() {
                 />
     
                 {/* Confirm Password */}
-                <input
+                {/* <input
                   type={showPassword ? "text" : "password"}
                   placeholder='Confirm Password'
                   className='w-full bg-transparent border border-gray-500 rounded-md px-3 py-3 text-white focus:outline-none focus:border-orange-500 mb-4'
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   value={confirmPassword}
-                />
+                /> */}
     
                 {/* Show Password */}
                 <div className='flex items-center gap-2 mt-3'>
@@ -140,11 +187,21 @@ function SignIn() {
                   >
                     Show Password
                   </label>
-    
                 </div>
+                 <div className='flex justify-between items-center mt-10'>
+                   <button className='text-orange-400 text-sm hover:underline'>Forget password</button>
+                   <button
+                    className='bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-full' 
+                    onClick={handleSignIn} disabled={loading}> {loading?
+
+                      <ClipLoader color = 'black' size={20}/>:"SignIn"}
+ 
+                   </button>
+    
+                  </div>
     
                 {/* Submit Button */}
-                <div className='flex justify-end mt-10'>
+                {/* <div className='flex justify-end mt-10'>
     
                   <button
                     className='bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-full'
@@ -153,7 +210,7 @@ function SignIn() {
                     Next
                   </button>
     
-                </div>
+                </div> */}
               </>
     
             )}
