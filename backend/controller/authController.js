@@ -37,13 +37,14 @@ export const signUp = async (req,res) => {
             photoUrl
         })
 
-        let token = await genToken(user._id)
+        const token = genToken(user._id)
 
         res.cookie("token", token, {
-            httpOnly:true,
-            secure:false,
-            sameSite:"Strict",
-            maxAge:7 * 24 * 60 * 60 * 1000
+            httpOnly: true,
+            secure: false,
+            sameSite: "lax",
+            path: "/",
+            maxAge: 7 * 24 * 60 * 60 * 1000
         })
 
         return res.status(201).json(user)
@@ -70,13 +71,14 @@ export const signIn = async (req, res) =>{
             return res.status(400).json({message:"Incorrect Password"})
         }
 
-        let token = await genToken(user._id)
+        const token = genToken(user._id)
 
         res.cookie("token", token, {
-            httpOnly:true,
-            secure:false,
-            sameSite:"Strict",
-            maxAge:7 * 24 * 60 * 60 * 1000
+            httpOnly: true,
+            secure: false,
+            sameSite: "lax",
+            path: "/",
+            maxAge: 7 * 24 * 60 * 60 * 1000
         })
 
         return res.status(200).json(user)
@@ -89,7 +91,10 @@ export const signIn = async (req, res) =>{
 export const signOut = async (req,res) =>{
     try {
 
-        res.clearCookie("token")
+        res.clearCookie("token", {
+            path: "/",
+            sameSite: "lax"
+        })
 
         return res.status(200).json({message:"SignOut Successfully"})
         

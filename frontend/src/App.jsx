@@ -6,6 +6,7 @@ import SignUp from './pages/SignUp'
 import SignIn from './pages/SignIn'
 import CustomAlert from './component/CustomAlert'
 import Shorts from './pages/Shorts/Shorts'
+import GetCurrentUser from './customHooks/getCurrentUser'
 
 export const serverUrl = "http://localhost:8000"
 
@@ -13,6 +14,7 @@ function App() {
   return (
     <>
     <CustomAlert/>
+    <GetCurrentUser />
       <Routes>
         <Route path='/' element={<Home />}>
         <Route path = '/shorts' element={<Shorts/>}/> 

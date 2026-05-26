@@ -20,6 +20,9 @@ import {GoVideo} from "react-icons/go";
 import {IoIosAddCircle} from "react-icons/io";
 //import { Outlet, useNavigate } from 'react-router-dom';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import Profile from '../component/profile';
+
 
 
 function Home() {
@@ -29,6 +32,8 @@ function Home() {
   const [active, setActive] = useState("Home")
   const navigate = useNavigate()
   const location = useLocation()
+  const userData = useSelector((state) => state.user.userData)
+  const [popup,setPopup] = useState(false)
 
   const categories = [
   "All", "Music", "Gaming", "Movies", "TV Shows", "News", "Trending",
@@ -91,12 +96,12 @@ function Home() {
           {/* right */}
           <div className='flex items-center gap-3'>
 
-            <button className='hidden md:flex items-center gap-1 py-1 rounded-full bg-[#272727] px-3 cursor-pointer'>
-              <span className='text-lg'>+</span>
-              <span>Create</span>
-            </button>
+            { userData?.channel &&<button className='hidden md:flex items-center gap-1 py-1 rounded-full bg-[#272727] px-3 cursor-pointer'>
+                <span className='text-lg'>+</span>
+                <span>Create</span>
+              </button>}
 
-            <FaUserCircle className='text-3xl hidden md:flex text-gray-400 ' />
+          { !userData?.photoUrl ? <FaUserCircle className='text-3xl hidden md:flex text-gray-400 ' /> : <img src={userData?.photoUrl} className='w-9 h-9 rounded-full object-cover border boader-gray-700 hidden md:flex'/>}
 
             <FaSearch className='text-lg md:hidden flex' />
 
@@ -153,7 +158,7 @@ function Home() {
         </div>
         </>)}
 
-        
+        <Profile/>
 
         <div className='mt-2'> 
           <Outlet/>
@@ -176,7 +181,21 @@ function Home() {
 
       <MobileSizeNav icon={<MdOutlineSubscriptions/>} text={"Subscriptions"} active={active === "Subscription"} onClick={()=>setActive("Subscription")}/>
 
-      <MobileSizeNav icon={<FaUserCircle/>} text={"You"} active={active === "You"} onClick={()=>setActive("You")}/>
+    <MobileSizeNav
+  icon={
+    userData?.photoUrl ? (
+      <img
+        src={userData.photoUrl}
+        className='w-8 h-8 rounded-full object-cover border border-gray-700'
+      />
+    ) : (
+      <FaUserCircle />
+    )
+  }
+  text={"You"}
+  active={active === "You"}
+  onClick={() => setActive("You")}
+/>
 
      </nav>
 
