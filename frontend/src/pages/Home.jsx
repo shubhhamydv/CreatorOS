@@ -46,7 +46,7 @@ function Home() {
     <div className='bg-[#0f0f0f] text-white min-h-screen relative'>
 
       {/* navbar */}
-      <header className='bg-[#0f0f0f] h-15 p-3 border-b border-gray-800 fixed top-0 left-0 right-0 z-50'>
+      <header className='bg-[#0f0f0f] h-15 p-3 border-b border-gray-800 fixed top-0 left-0 right-0 z-50 hidden md:flex'>
 
         <div className='flex items-center justify-between'>
 
@@ -101,7 +101,7 @@ function Home() {
                 <span>Create</span>
               </button>}
 
-          { !userData?.photoUrl ? <FaUserCircle className='text-3xl hidden md:flex text-gray-400 ' /> : <img src={userData?.photoUrl} className='w-9 h-9 rounded-full object-cover border boader-gray-700 hidden md:flex'/>}
+          { !(userData?.photoUrl || userData?.photoURL) ? <FaUserCircle className='text-3xl hidden md:flex text-gray-400 '  onClick={()=>setPopup(prev => !prev)}/> : <img src={userData?.photoUrl || userData?.photoURL} className='w-9 h-9 rounded-full object-cover border boader-gray-700 hidden md:flex'  onClick={()=>setPopup(prev => !prev)}/>}
 
             <FaSearch className='text-lg md:hidden flex' />
 
@@ -158,7 +158,7 @@ function Home() {
         </div>
         </>)}
 
-        <Profile/>
+        {popup && <Profile/>}
 
         <div className='mt-2'> 
           <Outlet/>
@@ -181,11 +181,11 @@ function Home() {
 
       <MobileSizeNav icon={<MdOutlineSubscriptions/>} text={"Subscriptions"} active={active === "Subscription"} onClick={()=>setActive("Subscription")}/>
 
-    <MobileSizeNav
+  <MobileSizeNav
   icon={
-    userData?.photoUrl ? (
+    (userData?.photoUrl || userData?.photoURL) ? (
       <img
-        src={userData.photoUrl}
+        src={userData.photoUrl || userData.photoURL}
         className='w-8 h-8 rounded-full object-cover border border-gray-700'
       />
     ) : (
@@ -194,7 +194,10 @@ function Home() {
   }
   text={"You"}
   active={active === "You"}
-  onClick={() => setActive("You")}
+  onClick={() => {
+    setActive("You");
+    navigate("/mobilepro");
+  }}
 />
 
      </nav>

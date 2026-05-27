@@ -19,13 +19,23 @@ function GetCurrentUser() {
                     { withCredentials: true }
                 )
 
-                dispatch(setUserData(result.data))
+                const serverUser = result.data
+                const savedUser = JSON.parse(localStorage.getItem('userData') || 'null')
 
-                console.log(result.data)
+                const mergedUser = {
+                    ...serverUser,
+                    photoUrl: serverUser.photoUrl || serverUser.photoURL || savedUser?.photoUrl || savedUser?.photoURL,
+                    photoURL: serverUser.photoURL || serverUser.photoUrl || savedUser?.photoURL || savedUser?.photoUrl
+                }
+
+                dispatch(setUserData(mergedUser))
+
+                console.log(mergedUser)
 
             } catch (error) {
 
-                dispatch(setUserData(null))
+                const savedUser = JSON.parse(localStorage.getItem('userData') || 'null')
+                dispatch(setUserData(savedUser))
 
                 console.log(error)
             }

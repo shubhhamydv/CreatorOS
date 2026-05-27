@@ -7,6 +7,7 @@ import SignIn from './pages/SignIn'
 import CustomAlert from './component/CustomAlert'
 import Shorts from './pages/Shorts/Shorts'
 import GetCurrentUser from './customHooks/getCurrentUser'
+import MobileProfile from './component/MobileProfile'
 
 export const serverUrl = "http://localhost:8000"
 
@@ -18,6 +19,8 @@ function App() {
       <Routes>
         <Route path='/' element={<Home />}>
         <Route path = '/shorts' element={<Shorts/>}/> 
+        <Route path = '/mobilepro' element={<MobileProfile/>}/> 
+
         </Route> 
         
 

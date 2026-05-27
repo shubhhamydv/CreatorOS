@@ -4,5 +4,18 @@ import tailwindcss from '@tailwindcss/vite'
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react(),tailwindcss()],
+  plugins: [react(), tailwindcss()],
+  define: {
+    'process.env': {},
+    process: {
+      env: {},
+      versions: {
+        node: '18.0.0'
+      }
+    },
+    global: 'globalThis'
+  },
+  optimizeDeps: {
+    exclude: ['cloudinary', 'bcryptjs', 'jsonwebtoken', 'mongoose']
+  }
 })

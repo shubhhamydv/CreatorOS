@@ -6,6 +6,8 @@ import axios from "axios"
 import {serverUrl} from '../App';
 import {ClipLoader} from 'react-spinner'
 import { showCustomAlert } from '../component/CustomAlert';
+import { useDispatch } from 'react-redux';
+import { setUserData } from '../redux/userSlice';
 
 function SignUp() {
 
@@ -21,6 +23,7 @@ function SignUp() {
   const [backendImage, setBackendImage] = useState(null)
   const [frontendImage, setFrontendImage] = useState(null)
   const [loading,setLoading] = useState(false)
+  const dispatch = useDispatch()
 
   const navigate = useNavigate()
 
@@ -67,6 +70,7 @@ const handleSignUp = async () =>{
   try {
     const result = await axios.post(serverUrl + "/api/auth/signup", formData, {withCredentials:true})
     console.log(result.data)
+    dispatch(setUserData(result.data))
     setLoading(false)
     showCustomAlert("Signup Successful")
     navigate("/")
@@ -145,6 +149,7 @@ const handleSignUp = async () =>{
             <div className='flex justify-end mt-10'>
 
               <button
+                type='button'
                 className='bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-full' 
                 onClick={handleNext}
                >
@@ -269,6 +274,7 @@ const handleSignUp = async () =>{
             <div className='flex justify-end mt-10'>
 
               <button
+                type='button'
                 className='bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-full'
                 onClick={handleSignUp} disabled={loading}>
                {loading ? "Creating Account..." : "Create Account"} 

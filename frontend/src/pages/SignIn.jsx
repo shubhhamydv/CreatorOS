@@ -7,6 +7,8 @@ import { serverUrl } from '../App';
   import { ClipLoader } from 'react-spinners';
 
 import axios from 'axios';
+import { useDispatch } from 'react-redux';
+import { setUserData } from '../redux/userSlice';
 
 function SignIn() {
    const navigate = useNavigate()
@@ -15,6 +17,7 @@ function SignIn() {
     const [password, setPassword] = useState("")
     const [showPassword,setShowPassword] = useState(false)
     const [loading,setLoading] = useState(false)
+    const dispatch = useDispatch()
 
 
      const handleNext = ()=>{
@@ -41,6 +44,7 @@ function SignIn() {
             
           const result = await axios.post(serverUrl + "/api/auth/signin", { email, password }, { withCredentials: true })
            console.log(result.data, "alert triggered")
+           dispatch(setUserData(result.data))
               setLoading(false)
                showCustomAlert("User SignIn Successful")
               setTimeout(() => navigate("/"), 2000)
@@ -112,14 +116,15 @@ function SignIn() {
     
                 {/* Next Button */}
                 <div className='flex justify-between items-center mt-10'>
-                  <button className='text-orange-400 text-sm hover:underline' onClick={() => navigate("/signup")}>Create Account</button>
+                  <button type='button' className='text-orange-400 text-sm hover:underline' onClick={() => navigate("/signup")}>Create Account</button>
                   <button
+                    type='button'
                     className='bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-full' 
                     onClick={handleNext}
                    >
                     Next
                   </button>
-    
+
                 </div>
               </>
     
@@ -189,8 +194,9 @@ function SignIn() {
                   </label>
                 </div>
                  <div className='flex justify-between items-center mt-10'>
-                   <button className='text-orange-400 text-sm hover:underline'>Forget password</button>
+                   <button type='button' className='text-orange-400 text-sm hover:underline'>Forget password</button>
                    <button
+                    type='button'
                     className='bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-full' 
                     onClick={handleSignIn} disabled={loading}> {loading?
 
