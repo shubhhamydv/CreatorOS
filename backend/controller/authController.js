@@ -4,6 +4,15 @@ import validator from "validator"
 import bcrypt from "bcryptjs"
 import genToken from "../config/token.js"
 
+const isProd = process.env.NODE_ENV === "production"
+const cookieOptions = {
+    httpOnly: true,
+    secure: isProd,
+    sameSite: isProd ? "none" : "lax",
+    path: "/",
+    maxAge: 7 * 24 * 60 * 60 * 1000
+}
+
 export const signUp = async (req,res) => {
     try{
         const {userName , email , password } = req.body
@@ -39,13 +48,7 @@ export const signUp = async (req,res) => {
 
         const token = genToken(user._id)
 
-        res.cookie("token", token, {
-            httpOnly: true,
-            secure: false,
-            sameSite: "lax",
-            path: "/",
-            maxAge: 7 * 24 * 60 * 60 * 1000
-        })
+        res.cookie("token", token, cookieOptions)
 
         return res.status(201).json(user)
 
@@ -73,13 +76,7 @@ export const signIn = async (req, res) =>{
 
         const token = genToken(user._id)
 
-        res.cookie("token", token, {
-            httpOnly: true,
-            secure: false,
-            sameSite: "lax",
-            path: "/",
-            maxAge: 7 * 24 * 60 * 60 * 1000
-        })
+        res.cookie("token", token, cookieOptions)
 
         return res.status(200).json(user)
 
@@ -93,12 +90,50 @@ export const signOut = async (req,res) =>{
 
         res.clearCookie("token", {
             path: "/",
-            sameSite: "lax"
+            sameSite: isProd ? "none" : "lax",
+            secure: isProd
         })
 
         return res.status(200).json({message:"SignOut Successfully"})
         
     } catch (error) {
         return res.status(500).json({message:`SignOut error ${error}`})
+    }
+}
+
+export const GoogleAuth = async (req,res) =>{
+    try{
+        const {userName, email, photoUrl} = req.body
+        let googlePhoto = photoUrl
+
+        if(photoUrl){
+            try{
+               googlePhoto = await uploadOnCloudinary(photoUrl)
+            } catch(error){
+             console.log("Cloudinary upload failed", error)
+            }
+        }
+
+        let user = await User.findOne({email})
+        if(!user){
+            user = await User.create({
+                userName,
+                email,
+                photoUrl: googlePhoto
+            })
+         } else{
+                if(!user.photoUrl && googlePhoto){
+                    user.photoUrl = googlePhoto
+                    await user.save()
+                }
+            }
+       const token = genToken(user._id)
+
+        res.cookie("token", token, cookieOptions)
+
+        return res.status(201).json(user)
+    }catch(error){
+        return res.status(500).json({message:`GoogleAuth error ${error}`})
+
     }
 }

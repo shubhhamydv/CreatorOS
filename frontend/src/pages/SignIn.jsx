@@ -116,7 +116,10 @@ function SignIn() {
     
                 {/* Next Button */}
                 <div className='flex justify-between items-center mt-10'>
-                  <button type='button' className='text-orange-400 text-sm hover:underline' onClick={() => navigate("/signup")}>Create Account</button>
+                  <div className='flex flex-col'>
+                    <button type='button' className='text-orange-400 text-sm hover:underline text-left' onClick={() => navigate("/signup")}>Create Account</button>
+                    <button type='button' className='text-gray-300 text-sm hover:underline mt-2 text-left' onClick={()=>navigate("/forgetpass")}>Forget password</button>
+                  </div>
                   <button
                     type='button'
                     className='bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-full' 
@@ -194,7 +197,7 @@ function SignIn() {
                   </label>
                 </div>
                  <div className='flex justify-between items-center mt-10'>
-                   <button type='button' className='text-orange-400 text-sm hover:underline'>Forget password</button>
+                   <button type='button' className='text-orange-400 text-sm hover:underline' onClick={()=>navigate("/forgetpass")}>Forget password</button>
                    <button
                     type='button'
                     className='bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-full' 

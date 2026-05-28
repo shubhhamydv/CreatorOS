@@ -173,8 +173,15 @@ function Home() {
      {/*bottom nav for mobile ui*/}
 
      <nav className='md:hidden fixed bottom-0 left-0 right-0 bg-[#0f0f0f] border-t border-gray-800 flex justify-around py-2 z-50'>
-      <MobileSizeNav icon={<FaHome/>} text={"Home"} active={active === "Home"} onClick={()=>setActive("Home")}/>
-
+<MobileSizeNav
+  icon={<FaHome />}
+  text={"Home"}
+  active={active === "Home"}
+  onClick={() => {
+    setActive("Home");
+    navigate("/");
+  }}
+/>
       <MobileSizeNav icon={<SiYoutubeshorts/>} text={"Shorts"} active={active === "Shorts"} onClick={()=>setActive("Shorts")}/>
 
       <MobileSizeNav icon={<IoIosAddCircle />}   active={active === "+"} onClick={()=>setActive(" +")}/>

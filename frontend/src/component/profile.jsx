@@ -44,8 +44,15 @@ function Profile() {
                 photoURL: photo
             }
             console.log("Google user data:", googleUser)
-            dispatch(setUserData(googleUser))
-            localStorage.setItem('userData', JSON.stringify(googleUser))
+            const result = await axios.post(serverUrl + "/api/auth/googleauth", googleUser, { withCredentials: true })
+            const backendUser = result.data
+            const mergedUser = {
+                ...backendUser,
+                photoUrl: backendUser.photoUrl || backendUser.photoURL || googleUser.photoUrl,
+                photoURL: backendUser.photoURL || backendUser.photoUrl || googleUser.photoURL
+            }
+            dispatch(setUserData(mergedUser))
+            localStorage.setItem('userData', JSON.stringify(mergedUser))
             showCustomAlert("Google Authentication successful")
         } catch(error){
          console.log(error)

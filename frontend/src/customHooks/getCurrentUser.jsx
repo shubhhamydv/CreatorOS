@@ -37,7 +37,9 @@ function GetCurrentUser() {
                 const savedUser = JSON.parse(localStorage.getItem('userData') || 'null')
                 dispatch(setUserData(savedUser))
 
-                console.log(error)
+                if (error.response?.status !== 401) {
+                    console.log(error)
+                }
             }
         }
 
