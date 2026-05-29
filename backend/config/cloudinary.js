@@ -14,15 +14,16 @@ const uploadOnCloudinary = async (filePath) => {
         }
 
         const result = await cloudinary.uploader.upload(filePath, { resource_type: 'auto' })
-        if (filePath && !filePath.startsWith("http")) {
+        if (filePath && !filePath.startsWith("http") && fs.existsSync(filePath)) {
             fs.unlinkSync(filePath)
         }
         return result.secure_url
     } catch (error) {
         console.log(error)
-        if (filePath && !filePath.startsWith("http")) {
+        if (filePath && !filePath.startsWith("http") && fs.existsSync(filePath)) {
             fs.unlinkSync(filePath)
         }
+        throw error
     }
 }
 

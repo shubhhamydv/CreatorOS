@@ -14,11 +14,16 @@ dotenv.config({
 const port = process.env.PORT || 8000
 
 const app = express()
+
 app.use(cookieParser())
 app.use(express.json())
 
+// IMPORTANT
+app.use("/public", express.static("public"))
+
 app.use(cors({
     origin: (origin, callback) => {
+
         const allowedOrigins = [
             "http://localhost:5173",
             "http://localhost:5174",
@@ -34,14 +39,18 @@ app.use(cors({
         }
 
         callback(new Error("Not allowed by CORS"), false)
+
     },
     credentials: true
 }))
-app.use("/api/auth",authRouter)
-app.use("/api/user",userRouter)
 
-app.listen(port, ()=>{
+app.use("/api/auth", authRouter)
+app.use("/api/user", userRouter)
+
+app.listen(port, () => {
+
     console.log("server started")
+
     connectDb()
 
 })

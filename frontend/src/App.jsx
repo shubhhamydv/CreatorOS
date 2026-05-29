@@ -1,34 +1,140 @@
 import React from 'react'
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, Navigate } from 'react-router-dom'
+import { useSelector } from 'react-redux'
 
 import Home from './pages/Home'
 import SignUp from './pages/SignUp'
 import SignIn from './pages/SignIn'
-import CustomAlert from './component/CustomAlert'
 import Shorts from './pages/Shorts/Shorts'
-import GetCurrentUser from './customHooks/getCurrentUser'
-import MobileProfile from './component/MobileProfile'
 import ForgetPassword from './pages/ForgetPassword'
+
+import CreateChannel from './pages/Channel/CreateChannel'
+import ViewChannel from './pages/Channel/ViewChannel'
+import UpdateChannel from './pages/Channel/UpdateChannel'
+
+import MobileProfile from './component/MobileProfile'
+import CustomAlert, { showCustomAlert } from './component/CustomAlert'
+
+import GetCurrentUser from './customHooks/getCurrentUser'
+import GetChannelData from './customHooks/GetChannelData'
+import CreatePage from './pages/Shorts/CreatePage'
+
 
 export const serverUrl = "http://localhost:8000"
 
+
+
+// Protect Route
+const ProtectRoute = ({ userData, children }) => {
+
+  if (!userData) {
+    showCustomAlert("Please signup first to use this feature")
+    return <Navigate to="/signin" replace />
+  }
+
+  return children
+}
+
+
+
 function App() {
+
+  const { userData } = useSelector((state) => state.user)
+
   return (
     <>
-    <CustomAlert/>
-    <GetCurrentUser />
+
+      {/* Custom Alert */}
+      <CustomAlert />
+
+      {/* Current User */}
+      <GetCurrentUser />
+
+      {/* Channel Data */}
+      <GetChannelData />
+
+
+
       <Routes>
+
+        {/* Main Layout */}
         <Route path='/' element={<Home />}>
-        <Route path = '/shorts' element={<Shorts/>}/> 
-        <Route path = '/mobilepro' element={<MobileProfile/>}/> 
 
-        </Route> 
-        
+          {/* Shorts */}
+          <Route
+            path='shorts'
+            element={
+              <ProtectRoute userData={userData}>
+                <Shorts />
+              </ProtectRoute>
+            }
+          />
 
+          {/* Mobile Profile */}
+          <Route
+            path='mobilepro'
+            element={
+              <ProtectRoute userData={userData}>
+                <MobileProfile />
+              </ProtectRoute>
+            }
+          />
+
+          {/* View Channel */}
+          <Route
+            path='viewchannel'
+            element={
+              <ProtectRoute userData={userData}>
+                <ViewChannel />
+              </ProtectRoute>
+            }
+          />
+
+          {/* Update Channel */}
+          <Route
+            path='updatechannel'
+            element={
+              <ProtectRoute userData={userData}>
+                <UpdateChannel />
+              </ProtectRoute>
+            }
+          />
+
+          {/* Create Video/Page */}
+          <Route
+            path='create'
+            element={
+              <ProtectRoute userData={userData}>
+                <CreatePage />
+              </ProtectRoute>
+            }
+          />
+
+        </Route>
+
+
+
+        {/* Auth Routes */}
         <Route path='/signup' element={<SignUp />} />
+
         <Route path='/signin' element={<SignIn />} />
-        <Route path='/forgetpass' element={<ForgetPassword/>} />
+
+        <Route path='/forgetpass' element={<ForgetPassword />} />
+
+
+
+        {/* Create Channel */}
+        <Route
+          path='/createchannel'
+          element={
+            <ProtectRoute userData={userData}>
+              <CreateChannel />
+            </ProtectRoute>
+          }
+        />
+
       </Routes>
+
     </>
   )
 }

@@ -77,9 +77,8 @@ const handleSignUp = async () =>{
   } catch (error) {
     setLoading(false)
     const message = error?.response?.data?.message || error?.message || "Signup failed"
-    setLoading(false)
     console.log("Signup error:", message)
-    showCustomAlert(error.response.data.message)
+    showCustomAlert(message)
   }
 }
 

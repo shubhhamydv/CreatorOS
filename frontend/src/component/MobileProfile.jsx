@@ -93,9 +93,8 @@ function MobileProfile() {
               {userData?.email}
             </span>
 
-            <span className='text-sm text-blue-400 cursor-pointer hover:underline'>
-              {userData?.channel}
-            </span>
+
+          <p className='text-sm text-blue-400 cursor-pointer hover:underline ' onClick={()=>{userData?.channel ? navigate("/viewchannel") : navigate('createchannel')}}></p>
           </div>
 
         </div>
