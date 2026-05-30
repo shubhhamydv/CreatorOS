@@ -18,6 +18,10 @@ import CustomAlert, { showCustomAlert } from './component/CustomAlert'
 import GetCurrentUser from './customHooks/getCurrentUser'
 import GetChannelData from './customHooks/GetChannelData'
 import CreatePage from './pages/Shorts/CreatePage'
+import CreateVideo from './pages/Videos/CreateVideo'
+import CreatePlaylist from './pages/Playlist/CreatePlaylist'
+import CreatePost from './pages/Post/CreatePost'
+import CreateShort from "./pages/Shorts/CreateShort"
 
 
 export const serverUrl = "http://localhost:8000"
@@ -106,6 +110,42 @@ function App() {
             element={
               <ProtectRoute userData={userData}>
                 <CreatePage />
+              </ProtectRoute>
+            }
+          />
+
+          <Route
+            path='createvideo'
+            element={
+              <ProtectRoute userData={userData}>
+                <CreateVideo />
+              </ProtectRoute>
+            }
+          />
+
+          <Route
+            path='createshort'
+            element={
+              <ProtectRoute userData={userData}>
+                <CreateShort />
+              </ProtectRoute>
+            }
+          />
+
+          <Route
+            path='createplaylist'
+            element={
+              <ProtectRoute userData={userData}>
+                <CreatePlaylist />
+              </ProtectRoute>
+            }
+          />
+
+          <Route
+            path='createpost'
+            element={
+              <ProtectRoute userData={userData}>
+                <CreatePost />
               </ProtectRoute>
             }
           />

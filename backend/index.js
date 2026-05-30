@@ -6,6 +6,7 @@ import authRouter from "./route/authRoute.js"
 import cookieParser from "cookie-parser"
 import cors from "cors"
 import userRouter from "./route/userRoute.js"
+import contentRouter from "./route/contentRoute.js"
 
 dotenv.config({
     path: fileURLToPath(new URL("./.env", import.meta.url))
@@ -46,6 +47,7 @@ app.use(cors({
 
 app.use("/api/auth", authRouter)
 app.use("/api/user", userRouter)
+app.use("/api/content",contentRouter)
 
 app.listen(port, () => {
 
