@@ -1,19 +1,23 @@
 import React, { useState } from 'react'
 import { serverUrl } from '../../App'
-import { linkWithCredential } from 'firebase/auth'
 import { showCustomAlert } from '../../component/CustomAlert'
 import { useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
+import { ClipLoader } from 'react-spinners'
+import axios from 'axios'
 
 function CreateVideo() {
-    const {channelData } =  useSelector(state=>state.user)
+  const { channelData } = useSelector((state) => state.user)
+
   const [videoUrl, setVideoUrl] = useState(null)
   const [thumbnail, setThumbnail] = useState(null)
   const [title, setTitle] = useState("")
   const [description, setDescription] = useState("")
   const [tags, setTags] = useState("")
   const [loading, setLoading] = useState(false)
+
   const navigate = useNavigate()
+
   const handleVideo = (e) => {
     if (e.target.files && e.target.files[0]) {
       setVideoUrl(e.target.files[0])
@@ -26,26 +30,60 @@ function CreateVideo() {
     }
   }
 
-  const handleUploadVideo = async ()=>{
+  const handleUploadVideo = async () => {
+    if (!videoUrl || !thumbnail) {
+      showCustomAlert("Please select video and thumbnail")
+      return
+    }
+
+    if (!channelData?._id) {
+      showCustomAlert("Please create a channel first")
+      return
+    }
+
     setLoading(true)
+
     const formData = new FormData()
+
     formData.append("title", title)
     formData.append("description", description)
-    formData.append("tags",JSON.stringify(tags.split(",").map(tags.trim())))
-    formData.append("video",videoUrl)
-    formData.append("thumbnail",thumbnail)
-    formData.append("channelId",channelData._id)
+    formData.append(
+      "tags",
+      JSON.stringify(tags.split(",").map((tag) => tag.trim()))
+    )
+    formData.append("video", videoUrl)
+    formData.append("thumbnail", thumbnail)
+    formData.append("channelId", channelData._id)
+
     try {
-     const result = await axios.post(serverUrl+ "api/content/create-video",formData,{linkWithCredential:true})
-     console.log(result.data)
-     showCustomAlert("upload video successfully")
-     loading(false)
-     navigate("/")
-     
-    } catch(error){
-        console.log(error)
-        showCustomAlert(error.response.data.message)
-        setLoading(false)
+      console.log("Uploading to:", `${serverUrl}/api/content/create-video`)
+
+      const result = await axios.post(
+        `${serverUrl}/api/content/create-video`,
+        formData,
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      )
+
+      console.log(result.data)
+
+      showCustomAlert("Upload video successfully")
+
+      setLoading(false)
+
+      navigate("/")
+    } catch (error) {
+      console.log(error)
+
+      showCustomAlert(
+        error?.response?.data?.message || "Something went wrong"
+      )
+
+      setLoading(false)
     }
   }
 
@@ -104,7 +142,7 @@ function CreateVideo() {
         {/* Tags */}
         <input
           type="text"
-          placeholder="Tags"
+          placeholder="Tags (comma separated)"
           value={tags}
           onChange={(e) => setTags(e.target.value)}
           className="w-full p-3 text-sm rounded-lg bg-[#121212] border border-gray-700 outline-none focus:border-orange-500"
@@ -136,10 +174,23 @@ function CreateVideo() {
         </div>
 
         {/* Upload Button */}
-        <button className="w-full bg-orange-500 hover:bg-orange-600 py-2.5 rounded-lg font-medium text-sm transition">
-          Upload
+        <button
+          className="w-full bg-orange-500 hover:bg-orange-600 py-2.5 rounded-lg font-medium text-sm transition disabled:opacity-50"
+          disabled={!title || !description || !tags || loading}
+          onClick={handleUploadVideo}
+        >
+          {loading ? (
+            <ClipLoader color="black" size={20} />
+          ) : (
+            "Upload Video"
+          )}
         </button>
 
+        {loading && (
+          <p className="text-center text-gray-300 text-sm animate-pulse">
+            Video uploading.... Please wait...
+          </p>
+        )}
       </div>
     </div>
   )

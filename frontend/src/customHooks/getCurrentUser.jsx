@@ -1,54 +1,74 @@
 import React, { useEffect } from 'react'
 import axios from 'axios'
 import { serverUrl } from '../App'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { setUserData } from '../redux/userSlice'
 
 function GetCurrentUser() {
 
-    const dispatch = useDispatch()
-    const {channelData} = useSelector(state=>state.user)
+  const dispatch = useDispatch()
 
-    useEffect(() => {
+  useEffect(() => {
 
-        const fetchUser = async () => {
+    const fetchUser = async () => {
+      try {
 
-            try {
+        const result = await axios.get(
+          `${serverUrl}/api/user/getuser`,
+          { withCredentials: true }
+        )
 
-                const result = await axios.get(
-                    serverUrl + "/api/user/getuser",
-                    { withCredentials: true }
-                )
+        const serverUser = result.data.user
 
-                const serverUser = result.data
-                const savedUser = JSON.parse(localStorage.getItem('userData') || 'null')
+        const savedUser = JSON.parse(
+          localStorage.getItem('userData') || 'null'
+        )
 
-                const mergedUser = {
-                    ...serverUser,
-                    photoUrl: serverUser.photoUrl || serverUser.photoURL || savedUser?.photoUrl || savedUser?.photoURL,
-                    photoURL: serverUser.photoURL || serverUser.photoUrl || savedUser?.photoURL || savedUser?.photoUrl
-                }
+        const mergedUser = {
+          ...serverUser,
+          photoUrl:
+            serverUser?.photoUrl ||
+            serverUser?.photoURL ||
+            savedUser?.photoUrl ||
+            savedUser?.photoURL,
 
-                dispatch(setUserData(mergedUser))
-
-                console.log(mergedUser)
-
-            } catch (error) {
-
-                const savedUser = JSON.parse(localStorage.getItem('userData') || 'null')
-                dispatch(setUserData(savedUser))
-
-                if (error.response?.status !== 401) {
-                    console.log(error)
-                }
-            }
+          photoURL:
+            serverUser?.photoURL ||
+            serverUser?.photoUrl ||
+            savedUser?.photoURL ||
+            savedUser?.photoUrl
         }
 
-        fetchUser()
+        dispatch(setUserData(mergedUser))
 
-    }, [channelData])
+        localStorage.setItem(
+          'userData',
+          JSON.stringify(mergedUser)
+        )
 
-    return null
+        console.log("USER DATA:", mergedUser)
+
+      } catch (error) {
+
+        const savedUser = JSON.parse(
+          localStorage.getItem('userData') || 'null'
+        )
+
+        if (savedUser) {
+          dispatch(setUserData(savedUser))
+        }
+
+        if (error.response?.status !== 401) {
+          console.log(error)
+        }
+      }
+    }
+
+    fetchUser()
+
+  }, [dispatch])
+
+  return null
 }
 
 export default GetCurrentUser
