@@ -1,58 +1,36 @@
 import uploadOnCloudinary from "../config/cloudinary.js";
-import Channel from "../model/channelModel.js";
-import Shorts from "../model/shortModel.js";
 
-export const createShort = async (req, res) => {
+// Upload Short / Video Controller
+export const uploadShort = async (req, res) => {
   try {
-    const { title, description, tags, channelId } = req.body;
+    const filePath = req.file?.path;
 
-    if (!title || !channelId) {
+    if (!filePath) {
       return res.status(400).json({
-        message: "Short title and channelId is required",
+        success: false,
+        message: "No file uploaded",
       });
     }
 
-    let shortUrl = "";
+    const shortUrl = await uploadOnCloudinary(filePath);
 
-    // upload file if exists
-    if (req.file) {
-      shortUrl = await uploadOnCloudinary(req.file.path);
-    }
-
-    // check channel
-    const channelData = await Channel.findById(channelId);
-
-    if (!channelData) {
-      return res.status(400).json({
-        message: "Channel is not found by id",
+    if (!shortUrl) {
+      return res.status(500).json({
+        success: false,
+        message: "Upload failed",
       });
     }
 
-    // create short
-    const newShort = await Shorts.create({
-      channel: channelData._id,
-      title,
-      description,
+    return res.status(200).json({
+      success: true,
       shortUrl,
-      tags: tags ? JSON.parse(tags) : [],
     });
-
-    // update channel
-    await Channel.findByIdAndUpdate(
-      channelId,
-      {
-        $push: { shorts: newShort._id },
-      },
-      { new: true }
-    );
-
-    return res.status(201).json(newShort);
-
   } catch (error) {
-    console.log(error);
+    console.error("Controller Error:", error);
+
     return res.status(500).json({
-      message: "Failed to create short",
-      error: error.message,
+      success: false,
+      message: "Internal server error",
     });
   }
 };

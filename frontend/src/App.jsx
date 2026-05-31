@@ -123,14 +123,16 @@ function App() {
             }
           />
 
-          <Route
+
+         <Route path="createshort" element={<CreateShort />} />
+          {/* <Route
             path='createshort'
             element={
               <ProtectRoute userData={userData}>
                 <CreateShort />
               </ProtectRoute>
             }
-          />
+          /> */}
 
           <Route
             path='createplaylist'

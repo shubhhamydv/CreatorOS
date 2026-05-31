@@ -88,7 +88,7 @@ function CreateVideo() {
   }
 
   return (
-    <div className="w-full min-h-screen bg-[#0f0f0f] text-white flex justify-center items-center px-4">
+    <div className="w-full min-h-[80vh] bg-[#0f0f0f] text-white flex justify-center items-center px-4">
       <div className="bg-[#212121] p-4 rounded-xl w-full max-w-sm shadow-lg space-y-4">
 
         <h2 className="text-lg font-semibold text-center">
