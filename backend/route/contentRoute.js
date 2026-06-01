@@ -1,8 +1,8 @@
 import express from "express";
 import isAuth from "../middleware/isAuth.js";
 import upload from "../middleware/multer.js";
-import { createVideo } from "../controller/videoController.js";
-import { uploadShort } from "../controller/shortController.js";
+import { createVideo, getAllVideos } from "../controller/videoController.js";
+import { getAllShorts, uploadShort } from "../controller/shortController.js";
 
 const contentRouter = express.Router();
 
@@ -17,6 +17,8 @@ contentRouter.post(
   createVideo
 );
 
+content Router.get("/getallvideos", isAuth,getAllVideos)
+
 // short routes
 contentRouter.post(
   "/create-short",
@@ -24,5 +26,6 @@ contentRouter.post(
   upload.single("shortUrl"),
   uploadShort
 );
+contentRouter.get("/getallshorts",isAuth,getAllShorts)
 
 export default contentRouter;
