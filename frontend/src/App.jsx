@@ -1,6 +1,7 @@
 import React from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
+import GetAllContentData from './customHooks/GetAllContentData'
 
 import Home from './pages/Home'
 import SignUp from './pages/SignUp'
@@ -22,7 +23,6 @@ import CreateVideo from './pages/Videos/CreateVideo'
 import CreatePlaylist from './pages/Playlist/CreatePlaylist'
 import CreatePost from './pages/Post/CreatePost'
 import CreateShort from "./pages/Shorts/CreateShort"
-
 
 export const serverUrl = "http://localhost:8000"
 
@@ -57,6 +57,7 @@ function App() {
       {/* Channel Data */}
       <GetChannelData />
 
+      <GetAllContentData />
 
 
       <Routes>

@@ -1,43 +1,65 @@
-import { trusted } from "mongoose";
 import uploadOnCloudinary from "../config/cloudinary.js";
-import Channel from "../model/channelModel.js"
-import Short from "../model/shortModel.js"
+import Channel from "../model/channelModel.js";
+import Short from "../model/shortModel.js";
 
-//Create shorts
-export const createShort = async(req,res) =>{
+// CREATE SHORT
+export const createShort = async (req, res) => {
   try {
-    const {title,description,tags,channelId} = req.body
-    if(!title || !channelId){
-      return res.status(400).json({message:"Short title and channelId is required"})
+    const { title, description, tags, channelId } = req.body;
+
+    if (!title || !channelId) {
+      return res.status(400).json({
+        success: false,
+        message: "Short title and channelId is required",
+      });
     }
-    let shortUrl
-    if(req.file){
-      shortUrl = await uploadOnCloudinary(req.file.path)
+
+    let shortUrl = "";
+
+    if (req.file) {
+      shortUrl = await uploadOnCloudinary(req.file.path);
     }
-    const channelData = await Channel.findById(channelId)
-    if(!channelData){
-      return res.status(400).json({message:"Channel is not found by Id"})
+
+    const channelData = await Channel.findById(channelId);
+
+    if (!channelData) {
+      return res.status(404).json({
+        success: false,
+        message: "Channel not found",
+      });
     }
 
     const newShort = await Short.create({
-      channel:channelData._id,
+      channel: channelData._id,
       title,
       description,
       shortUrl,
-      tags:tags ? JSON.parse(tags) : []
-    })
-    await Channel.findByIdAndUpdate(channelData._id,{
-      $push : {shorts : newShort._id}
+      tags: tags ? JSON.parse(tags) : [],
+    });
 
-    },{new:true})
-    return res.status(201).json(newShort)
+    await Channel.findByIdAndUpdate(
+      channelData._id,
+      {
+        $push: { shorts: newShort._id },
+      },
+      { new: true }
+    );
 
+    return res.status(201).json({
+      success: true,
+      short: newShort,
+    });
   } catch (error) {
-    return res.status(500).json({message:`failed to create short ${error}`})
-  }
-}
+    console.error("CREATE SHORT ERROR:", error);
 
-// Upload Short / Video Controller
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+// UPLOAD SHORT ONLY
 export const uploadShort = async (req, res) => {
   try {
     const filePath = req.file?.path;
@@ -63,24 +85,39 @@ export const uploadShort = async (req, res) => {
       shortUrl,
     });
   } catch (error) {
-    console.error("Controller Error:", error);
+    console.error("UPLOAD SHORT ERROR:", error);
 
     return res.status(500).json({
       success: false,
-      message: "Internal server error",
+      message: error.message,
     });
   }
 };
 
-export const getAllShorts = async(req,res)=>{
+// GET ALL SHORTS (FIXED)
+export const getAllShorts = async (req, res) => {
   try {
-    const shorts = await short.find().sort({createdAt : -1})
-    if(!shorts){
-      return res.status(400).json({message: "Shorts are not found"})
+    const shorts = await Short.find()
+      .sort({ createdAt: -1 })
+      .populate("channel");
+
+    if (shorts.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No shorts found",
+      });
     }
-    return re.status(200).json(shorts)
+
+    return res.status(200).json({
+      success: true,
+      shorts,
+    });
   } catch (error) {
-    return res.status(500).json({message:`failed to get Shorts ${error}`})
-    
+    console.error("GET ALL SHORTS ERROR:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
-}
+};

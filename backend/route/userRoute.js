@@ -3,6 +3,7 @@ import { createChannel, getCurrentUser, getMyChannel, updateChannel } from "../c
 import isAuth from "../middleware/isAuth.js"
 import upload from "../middleware/multer.js"
 
+
 const userRouter = express.Router()
 
 userRouter.get("/getuser", isAuth, getCurrentUser)

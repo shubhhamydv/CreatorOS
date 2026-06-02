@@ -2,19 +2,22 @@ import React, { useState } from 'react'
 import { serverUrl } from '../../App'
 import { showCustomAlert } from '../../component/CustomAlert'
 import { useNavigate } from 'react-router-dom'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { ClipLoader } from 'react-spinners'
 import axios from 'axios'
+import { setAllVideosData } from '../../redux/contentSlice'
+import { setChannelData } from '../../redux/userSlice'
 
 function CreateVideo() {
   const { channelData } = useSelector((state) => state.user)
-
+   const {allVideosData} = useSelector(state=>state.content)
   const [videoUrl, setVideoUrl] = useState(null)
   const [thumbnail, setThumbnail] = useState(null)
   const [title, setTitle] = useState("")
   const [description, setDescription] = useState("")
   const [tags, setTags] = useState("")
   const [loading, setLoading] = useState(false)
+  const dispatch = useDispatch()
 
   const navigate = useNavigate()
 
@@ -76,6 +79,11 @@ function CreateVideo() {
       setLoading(false)
 
       navigate("/")
+      dispatch(setAllVideosData([...allVideosData,result.data]))
+      const updatechannel = {
+        ...channelData,videos :[...(channelData.videos || []), result.data]
+      }
+      dispatch(setChannelData(updatechannel))
     } catch (error) {
       console.log(error)
 

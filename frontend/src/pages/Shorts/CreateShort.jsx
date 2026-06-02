@@ -1,62 +1,77 @@
 import axios from "axios";
 import React, { useState } from "react";
 import { FaCloudUploadAlt } from "react-icons/fa";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { serverUrl } from "../../App";
 import { showCustomAlert } from "../../component/CustomAlert";
 import { useNavigate } from "react-router-dom";
 import { ClipLoader } from "react-spinners";
+import { setAllShortsData } from "../../redux/contentSlice";
+import { setChannelData } from "../../redux/userSlice";
+// import { updateChannel } from "../../../../backend/controller/userController";
 
 function CreateShort() {
   const { channelData } = useSelector((state) => state.user);
+  const {allShortData} = useSelector(state=>state.content)
 
   const [shortUrl, setShortUrl] = useState(null);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [tags, setTags] = useState("");
   const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch()
 
   const navigate = useNavigate();
 
   const handleUploadShort = async () => {
-    if (!shortUrl || !title || !description || !tags) {
-      showCustomAlert("All fields are required");
-      return;
-    }
+  if (!shortUrl || !title || !description || !tags) {
+    showCustomAlert("All fields are required");
+    return;
+  }
 
-    setLoading(true);
+  setLoading(true);
 
-    const formData = new FormData();
+  const formData = new FormData();
 
-    formData.append("title", title);
-    formData.append("description", description);
-    formData.append(
-      "tags",
-      JSON.stringify(tags.split(",").map((tag) => tag.trim()))
+  formData.append("title", title);
+  formData.append("description", description);
+  formData.append(
+    "tags",
+    JSON.stringify(tags.split(",").map((tag) => tag.trim()))
+  );
+  formData.append("shortUrl", shortUrl);
+  formData.append("channelId", channelData?._id);
+
+  try {
+    const result = await axios.post(
+      serverUrl + "/api/content/create-short",
+      formData,
+      { withCredentials: true }
     );
-    formData.append("shortUrl", shortUrl);
-    formData.append("channelId", channelData?._id);
 
-    try {
-      const result = await axios.post(
-        serverUrl + "/api/content/create-short",
-        formData,
-        { withCredentials: true }
-      );
+    dispatch(setAllShortsData([...allShortData, result.data]));
 
-      console.log(result.data);
-      showCustomAlert("Short created successfully");
+    const updatedChannel = {
+      ...channelData,
+      shorts: [...(channelData?.shorts || []), result.data],
+    };
 
-      setLoading(false);
-      navigate("/");
-    } catch (error) {
-      console.log(error);
-      showCustomAlert(
-        error?.response?.data?.message || "Something went wrong"
-      );
-      setLoading(false);
-    }
-  };
+    dispatch(setChannelData(updatedChannel));
+
+    showCustomAlert("Short created successfully");
+
+    setLoading(false);
+    navigate("/");
+  } catch (error) {
+    console.log(error);
+
+    showCustomAlert(
+      error?.response?.data?.message || "Something went wrong"
+    );
+
+    setLoading(false);
+  }
+};
 
   return (
     <div className="w-full min-h-[80vh] bg-[#0f0f0f] text-white flex flex-col pt-5">

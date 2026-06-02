@@ -5,8 +5,8 @@ const contentSlice = createSlice({
     name: "content",
 
     initialState: {
-        allVideosData: null,
-        allShortsData: null
+        allVideosData: [],
+        allShortsData: []
     },
 
     reducers: {

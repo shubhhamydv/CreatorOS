@@ -5,6 +5,7 @@ import { serverUrl } from "../App"
 import { setChannelData } from "../redux/userSlice"
 
 const GetChannelData = () => {
+      console.log("GET ALL CONTENT DATA RUNNING");
 
     const dispatch = useDispatch()
 

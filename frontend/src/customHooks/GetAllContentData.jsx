@@ -1,147 +1,48 @@
-import axios from 'axios'
-import React, { useEffect } from 'react'
-import { useDispatch } from 'react-redux'
-import { serverUrl } from '../App'
-import { setAllVideosData } from '../redux/contentSlice'
+import React, { useEffect } from "react";
+import axios from "axios";
+import { useDispatch } from "react-redux";
+import { serverUrl } from "../App";
+import { setAllVideosData, setAllShortsData } from "../redux/contentSlice";
 
-const GetAllContentData = () => {
-  const dispatch = useDispatch()
+function GetAllContentData() {
+  const dispatch = useDispatch();
 
   useEffect(() => {
-
-    const fetchAllVideos = async () => {
+    const fetchContent = async () => {
       try {
+       
+      const videoRes = await axios.get(`${serverUrl}/api/content/getallvideos`);
 
-        const result = await axios.get(
-          `${serverUrl}/api/content/getallvideos`,
-          { withCredentials: true }
-        )
-        dispatch(setAllVideosData(result.data))
-        console.log(result.data)
+        const data = videoRes.data;
 
-       {/* const serverUser = result.data.user
+        const videos = Array.isArray(data)
+          ? data
+          : data?.videos || data?.content || data?.data || [];
 
-        const savedUser = JSON.parse(
-          localStorage.getItem('userData') || 'null'
-        )
-
-        const mergedUser = {
-          ...serverUser,
-          photoUrl:
-            serverUser?.photoUrl ||
-            serverUser?.photoURL ||
-            savedUser?.photoUrl ||
-            savedUser?.photoURL,
-
-          photoURL:
-            serverUser?.photoURL ||
-            serverUser?.photoUrl ||
-            savedUser?.photoURL ||
-            savedUser?.photoUrl
-        }
-
-        dispatch(setUserData(mergedUser))
-
-        localStorage.setItem(
-          'userData',
-          JSON.stringify(mergedUser)
-        )
-
-        console.log("USER DATA:", mergedUser) */}
-
+        dispatch(setAllVideosData(videos));
       } catch (error) {
+        dispatch(setAllVideosData([]));
+      }
 
-        console.log(error)
-        dispatch(setAllVideosData(null))
-
-       {/* const savedUser = JSON.parse(
-          localStorage.getItem('userData') || 'null'
-        )
-
-        if (savedUser) {
-          dispatch(setUserData(savedUser))
-        }
-
-        if (error.response?.status !== 401) {
-          console.log(error)
-        }
-      } */}
-    }
-}
-
-    fetchAllVideos()
-
-  }, [])
-
-   useEffect(() => {
-
-    const fetchAllVideos = async () => {
       try {
+       
+    const shortsRes = await axios.get(`${serverUrl}/api/content/getallshorts`);
+        const data = shortsRes.data;
 
-        const result = await axios.get(
-          `${serverUrl}/api/content/getallvideos`,
-          { withCredentials: true }
-        )
-        dispatch(setAllVideosData(result.data))
-        console.log(result.data)
+        const shorts = Array.isArray(data)
+          ? data
+          : data?.shorts || data?.content || data?.data || [];
 
-       {/* const serverUser = result.data.user
-
-        const savedUser = JSON.parse(
-          localStorage.getItem('userData') || 'null'
-        )
-
-        const mergedUser = {
-          ...serverUser,
-          photoUrl:
-            serverUser?.photoUrl ||
-            serverUser?.photoURL ||
-            savedUser?.photoUrl ||
-            savedUser?.photoURL,
-
-          photoURL:
-            serverUser?.photoURL ||
-            serverUser?.photoUrl ||
-            savedUser?.photoURL ||
-            savedUser?.photoUrl
-        }
-
-        dispatch(setUserData(mergedUser))
-
-        localStorage.setItem(
-          'userData',
-          JSON.stringify(mergedUser)
-        )
-
-        console.log("USER DATA:", mergedUser) */}
-
+        dispatch(setAllShortsData(shorts));
       } catch (error) {
+        dispatch(setAllShortsData([]));
+      }
+    };
 
-        console.log(error)
-        dispatch(setAllVideosData(null))
+    fetchContent();
+  }, [dispatch]);
 
-       {/* const savedUser = JSON.parse(
-          localStorage.getItem('userData') || 'null'
-        )
-
-        if (savedUser) {
-          dispatch(setUserData(savedUser))
-        }
-
-        if (error.response?.status !== 401) {
-          console.log(error)
-        }
-      } */}
-    }
+  return null;
 }
 
-    fetchAllVideos()
-
-  }, [])
-
-
-
-
-}
-
-export default GetAllContentData
+export default GetAllContentData;

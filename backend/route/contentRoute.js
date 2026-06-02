@@ -17,7 +17,7 @@ contentRouter.post(
   createVideo
 );
 
-content Router.get("/getallvideos", isAuth,getAllVideos)
+contentRouter.get("/getallvideos", isAuth,getAllVideos)
 
 // short routes
 contentRouter.post(

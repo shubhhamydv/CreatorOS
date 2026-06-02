@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux'
 
 import logo from "../assets/CreatorOS.png"
 
+import AllVideosPage from '../component/AllVideosPage'  
 import {
   FaBars,
   FaUserCircle,
@@ -270,11 +271,17 @@ function Home() {
           )
         }
 
-        {/* Profile Popup */}
-        {popup && <Profile />}
+        
+      {popup && <Profile />}
 
-        {/* Nested Routes */}
-        <Outlet />
+{/* Home Page Videos */}
+{location.pathname === "/" && <AllVideosPage />}
+
+<div className='mt-2'>
+  <Outlet />
+</div>
+
+
 
       </main>
 
