@@ -1,11 +1,12 @@
 import React, { useEffect } from "react";
 import axios from "axios";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { serverUrl } from "../App";
 import { setAllVideosData, setAllShortsData } from "../redux/contentSlice";
 
 function GetAllContentData() {
   const dispatch = useDispatch();
+  const {channelData} =useSelector(state=>state.user)
 
   useEffect(() => {
     const fetchContent = async () => {
@@ -21,7 +22,7 @@ function GetAllContentData() {
 
         dispatch(setAllVideosData(videos));
       } catch (error) {
-        dispatch(setAllVideosData([]));
+        dispatch(setAllVideosData([channelData]));
       }
 
       try {
@@ -35,7 +36,7 @@ function GetAllContentData() {
 
         dispatch(setAllShortsData(shorts));
       } catch (error) {
-        dispatch(setAllShortsData([]));
+        dispatch(setAllShortsData([channelData]));
       }
     };
 

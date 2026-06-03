@@ -27,24 +27,42 @@ function VideoCardWrapper({ video }) {
   }, [video?.videoUrl]);
 
   return (
+    <div className="flex flex-wrap gap-6 mb-12 sm:items-center sm:justify-center"> 
+{
+    allVideosData?.map((video) => (
     <VideoCard
       key={video?._id}
+       
       id={video?._id}
       thumbnail={video?.thumbnail}
       title={video?.title}
       channelLogo={video?.channel?.avatar || video?.channel?.photoUrl}
       channelName={video?.channel?.name}
-      duration={duration}
+      duration={duration(video?._id) || "0.00"}
       views={video?.views}
-    />
-  );
+     /> 
+  ))
 }
+</div>
+  )}
 
 // ── Main page ────────────────────────────────────────────────────────────────
 function AllVideosPage() {
   const allVideosData = useSelector(
     (state) => state.content?.allVideosData || []
   );
+  const [duration,setDuration] = useState(" ")
+
+  (useEffect()=>{
+    if(Array.isArray(allVideosData) && allVideosData.length > 0){
+      allVideosData.forEach((videos)=>{
+        getVideoDuration(videos.videoUrl, (formattedTime)=>{
+          setDuration((prev)=>({...prev, [videos._id] : formattedTime}))
+        })
+      })
+    }
+
+  },[allVideosData])
 
   console.log("🔥 VIDEOS STATE:", allVideosData);
 
