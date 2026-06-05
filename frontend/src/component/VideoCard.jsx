@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 function VideoCard({
   thumbnail,
@@ -9,9 +10,13 @@ function VideoCard({
   views,
   id,
 }) {
-  const navigate useNavigate()
+  const navigate = useNavigate();
+
   return (
-    <div className="w-[360px] cursor-pointer" onClick={()=>navigate(`/playvideo/${id}`)}>
+    <div
+      className="w-[360px] cursor-pointer"
+      onClick={() => navigate(`/playvideo/${id}`)}
+    >
       {/* Thumbnail */}
       <div className="relative">
         <img
@@ -38,13 +43,9 @@ function VideoCard({
             {title}
           </h3>
 
-          <p className="text-xs text-gray-400 mt-1">
-            {channelName}
-          </p>
+          <p className="text-xs text-gray-400 mt-1">{channelName}</p>
 
-          <p className="text-xs text-gray-400">
-            {views} views
-          </p>
+          <p className="text-xs text-gray-400">{views} views</p>
         </div>
       </div>
     </div>

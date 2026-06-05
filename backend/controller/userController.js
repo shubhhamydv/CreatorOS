@@ -297,3 +297,33 @@ export const getMyChannel = async (req, res) => {
         })
     }
 }
+
+export const toggleSubscribe = async (req,res)=>{
+    try{
+    const {channeId} = req.body
+    const userId = req.userId
+    const channel = await Channel.findById({owner:userId}).populate(owner).populate("videos").populate("shorts")
+    if(!channeId){
+        return res.status(400).json({message:"ChannelId is required"})
+    }
+    const channel = await Channel.findById(channelId)
+    if(!channel){
+        return res.status(400).json({message:"Channel is not found"})
+    }
+    const isSuscribed = ContentVisibilityAutoStateChangeEvent?.AddSubscribers?.include(userId)
+    if(isSuscribed){
+        channel?.subscribers.pull(userId)
+    }
+    else{
+        channel?.subscribers.push(userId)
+    }
+    await channel.save()
+    const updatedChannel = channel.findById(channelId).populate("owner")
+    .populate("videos")
+    .populate("shorts")
+    return res.status(200).json(updateChannel)
+    } catch(error)
+    {
+      return res.status(500).json({message:`Failed to ${error}`})
+    }
+}

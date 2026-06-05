@@ -1,5 +1,7 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
+import { SiYoutubeshorts } from "react-icons/si";
+import ShortCard from "./ShortCard";
 
 function AllShortsPage() {
     const {allShortsData} = useSelector(state=>state.content)
