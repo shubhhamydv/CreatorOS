@@ -306,7 +306,7 @@ export const toggleSubscribe = async (req,res)=>{
     if(!channeId){
         return res.status(400).json({message:"ChannelId is required"})
     }
-    const channel = await Channel.findById(channelId)
+   // const channel = await Channel.findById(channelId)
     if(!channel){
         return res.status(400).json({message:"Channel is not found"})
     }

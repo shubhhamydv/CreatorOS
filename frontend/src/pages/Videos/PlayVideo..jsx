@@ -53,7 +53,7 @@ const [vol, setVol] = useState(1);
     const {userData} = useSelector(state=>state.user)
     const [loading,setLoading] = useState(false)
     const dispatch = useDispatch()
-    const [isSubscribe,setisSubscribe] = useState(channel?.subscribers?.some((sub)=>sub._id.toString() === userData._id.toString() || sub.toString() ===userData._id.toString()))
+    const [isSubscribed,setIsSubscribed] = useState(channel?.subscribers?.some((sub)=>sub._id.toString() === userData._id?.toString() || sub?.toString() ===userData._id?.toString()))
     useEffect(()=>{
         if(!allVideosData){
             return;
@@ -138,14 +138,18 @@ const [vol, setVol] = useState(1);
             ...prev, subscribers:data.subscribers || prev.subscribers
           }))
           
-          dispatch(setChannelData((prev)=>({
-            ...prev, subscribers:result.data.subscribers || prev.subscribers
-          })))
+          
           setLoading(false)
         } catch(error){
            console.log(error)
            setLoading(false)
         }
+
+        useEffect(()=>{
+
+            setIsSubscribed(channel?.subscribers?.some((sub)=>sub._id?.toString() === userData._id?.toString() || sub?.toString() ===userData._id?.toString()))
+
+        },[channel?.subscribers , userData?._id])
     }
 
   return (
@@ -217,7 +221,7 @@ const [vol, setVol] = useState(1);
                         <h1 className='text-md font-bold'>{channel?.name}</h1>
                         <h3 className='text-[13px]'>{channel?.subscribers.length}</h3>
                     </div>
-                   <button className='px-[20px] py-[8px] rounded-4xl border border-gray-600 ml-[20px] text-md bg-white text-black hover:bg-orange-600 hover:text-black'>Subscribe</button> 
+                   <button onClick={handleSubscribe} className={`px-[20px] py-[8px] rounded-4xl border border-gray-600 ml-[20px] text-md ${isSubscribed ? "bg-black text-white hover:bg-orange-600 hover:text-black" : "bg-white text-black hover:bg-orange-600 hover:text-black"} `}>{isSubscribed ? "Subscribed":Subscribe}</button> 
                 </div>
                 <div className='flex items-center gap-6 mt-3'><IconButton icon={FaThumbsUp} label={"Likes"} active={video?.likes.include(userData._id)} count={video?.likes?.length}/>
                 <IconButton icon={FaThumbsUp} label={"Dislikes"} active={video?.likes.include(userData._id)} count={video?.dislikes?.length}/>
