@@ -99,7 +99,7 @@ function PlayVideo() {
                 <button className='bg-black/70 p-3 sm:p-4 rounded-full hover:bg-orange-600 transition' onClick={skipForward}><FaForward size={24}/></button>
             </div>}
 
-            <div className='absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/60 to-transparent px-2 sm:px-4 py-2 z-30'>
+            <div className='absolute bottom-0 left-0 right-0 bg-gradient-to-5 from-black/80 via-black/60 to-transparent px-2 sm:px-4 py-2 z-30'>
             <input type="range" min={0} max={100} onaChange={handleSeek} className='w-full accent-orange-600' value={progress} />
             <div className='flex items-center justify-between mt-1 sm:mt-2 text-xs sm:text-sm text-gray-200'>
 
