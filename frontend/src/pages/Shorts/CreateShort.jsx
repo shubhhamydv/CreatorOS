@@ -12,7 +12,7 @@ import { setChannelData } from "../../redux/userSlice";
 
 function CreateShort() {
   const { channelData } = useSelector((state) => state.user);
-  const {allShortData} = useSelector(state=>state.content)
+  const {allShortsData} = useSelector(state=>state.content)
 
   const [shortUrl, setShortUrl] = useState(null);
   const [title, setTitle] = useState("");
@@ -49,7 +49,7 @@ function CreateShort() {
       { withCredentials: true }
     );
 
-    dispatch(setAllShortsData([...allShortData, result.data]));
+    dispatch(setAllShortsData([...allShortsData, result.data]));
 
     const updatedChannel = {
       ...channelData,

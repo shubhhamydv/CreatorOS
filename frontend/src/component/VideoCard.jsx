@@ -9,8 +9,9 @@ function VideoCard({
   views,
   id,
 }) {
+  const navigate useNavigate()
   return (
-    <div className="w-[360px] cursor-pointer">
+    <div className="w-[360px] cursor-pointer" onClick={()=>navigate(`/playvideo/${id}`)}>
       {/* Thumbnail */}
       <div className="relative">
         <img

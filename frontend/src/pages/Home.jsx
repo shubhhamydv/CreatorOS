@@ -22,6 +22,7 @@ import { GoVideo } from "react-icons/go"
 import { IoIosAddCircle } from "react-icons/io"
 
 import Profile from '../component/profile'
+import AllShortsPage from '../component/AllShortsPage'
 
 function Home() {
 
@@ -275,7 +276,7 @@ function Home() {
       {popup && <Profile />}
 
 {/* Home Page Videos */}
-{location.pathname === "/" && <AllVideosPage />}
+{location.pathname === "/" && <AllVideosPage /> , <AllShortsPage/>}
 
 <div className='mt-2'>
   <Outlet />

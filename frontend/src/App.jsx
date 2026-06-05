@@ -23,6 +23,7 @@ import CreateVideo from './pages/Videos/CreateVideo'
 import CreatePlaylist from './pages/Playlist/CreatePlaylist'
 import CreatePost from './pages/Post/CreatePost'
 import CreateShort from "./pages/Shorts/CreateShort"
+import PlayVideo from './pages/Videos/PlayVideo.'
 
 export const serverUrl = "http://localhost:8000"
 
@@ -172,6 +173,15 @@ function App() {
           element={
             <ProtectRoute userData={userData}>
               <CreateChannel />
+            </ProtectRoute>
+          }
+        />
+         {/*playvideo*/}
+        <Route
+          path='/playvideo/:videoId'
+          element={
+            <ProtectRoute userData={userData}>
+              <PlayVideo/>
             </ProtectRoute>
           }
         />
