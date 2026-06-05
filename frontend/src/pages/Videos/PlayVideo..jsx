@@ -1,6 +1,6 @@
 import React, { useEffect, useRef,useState } from 'react'
-import { useSelector } from 'react-redux'
-import{useNavigate, useParams} from "react-router-dom"
+import { useDispatch, useSelector } from 'react-redux'
+import{data, useNavigate, useParams} from "react-router-dom"
 
 import{
     FaPlay, FaPause, FaForward, FaBackward, FaVolumeUp, FaVolumeMute, FaExpand, FaThumbsUp, FaThumbsDown, FaDownload, FaBookmark,
@@ -13,6 +13,7 @@ import Describtion from '../../component/Describtion';
 import axios from 'axios';
 import { serverUrl } from '../../App';
 import { linkWithCredential } from 'firebase/auth';
+import { setChannelData } from '../../redux/userSlice';
 const IconButton = ({ icon: Icon, active, label, count, onClick }) => (
     <button className='flex flex-col items-center' onClick={onclick}>
         <div
@@ -51,7 +52,8 @@ const [vol, setVol] = useState(1);
     const suggestedShotrs = AllShortsData?.slice(0,10 || [])
     const {userData} = useSelector(state=>state.user)
     const [loading,setLoading] = useState(false)
-
+    const dispatch = useDispatch()
+    const [isSubscribe,setisSubscribe] = useState(channel?.subscribers?.some((sub)=>sub._id.toString() === userData._id.toString() || sub.toString() ===userData._id.toString()))
     useEffect(()=>{
         if(!allVideosData){
             return;
@@ -132,8 +134,17 @@ const [vol, setVol] = useState(1);
         setLoading(true)
         try{
           const result = await axios.post(serverUrl + "/api/user/togglesubscribe",{channelId:channel._id},{withCredential:true})
+          setChannel((prev)=>({
+            ...prev, subscribers:data.subscribers || prev.subscribers
+          }))
+          
+          dispatch(setChannelData((prev)=>({
+            ...prev, subscribers:result.data.subscribers || prev.subscribers
+          })))
+          setLoading(false)
         } catch(error){
-
+           console.log(error)
+           setLoading(false)
         }
     }
 
