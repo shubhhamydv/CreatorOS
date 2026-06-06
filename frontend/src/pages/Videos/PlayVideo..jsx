@@ -321,7 +321,7 @@ const [vol, setVol] = useState(1);
                     <input type=" text" placeholder='Add a comment...' className='flex-1  border-gray-700 bg-[#1a1a1a] text-white rounded-e-lg px-3 py-2 focus:outline-none  focus:ring-1 focus:ring-red-600'onChange={(e)=>setNewComments(e.target.value)} value={newComment} />
                     <button className='bg-orange-600 hover:bg-orange-700 text-white pd-4 py-2 rounded-lg 'disabled={loading1} onClick={haddleAddComment}>{loading?<ClipLoader size={20} color='black'/>:"Post"}</button>
                 </div>
-                <div className='space-y--3'>
+                <div className='space-y-3 max-h-[300px] overflow-y-auto pr-2'>
                     {comment?.map((comment)=>(
                         <div key={comment?._id} className='p-3 bg-[1a1a1a] rounde-lg shadow-sm text-sm'>
                             <div className='flex items-center justify-start gap-1'>
