@@ -56,7 +56,7 @@ export const createVideo = async (req, res) => {
 
 export const getAllVideos = async(req,res)=>{
   try {
-    const videos = await Video.find().sort({createdAt : -1}).populate("channel")
+    const videos = await Video.find().sort({createdAt : -1}).populate("channel comments.author comments.replies.author")
     if(!videos){
       return res.status(400).json({message: "Videos are not found"})
     }
@@ -187,11 +187,11 @@ export const addReply = async (req,res)=>{
      populatedVideo = await Video.findById(videoId)
    .populate({
     path:"commets.author",
-    select:'username photoUrl email'
+    select:'userName photoUrl email'
    })
    .populate({
     path:"comments.replies.author",
-    select:"username photourl email"
+    select:"userName photourl email"
    });
    return res.status(200).json(populatedVideo)
    
@@ -204,11 +204,11 @@ export const addReply = async (req,res)=>{
    const populatedVideo = await Video.findById(videoId)
    .populate({
     path:"commets.author",
-    select:'username photoUrl email'
+    select:'userName photoUrl email'
    })
    .populate({
     path:"comments.replies.author",
-    select:"username photourl email"
+    select:"userName photourl email"
    });
    return res.status(200).json(populatedVideo)
   } catch(error){

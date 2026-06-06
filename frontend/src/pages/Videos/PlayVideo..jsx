@@ -198,7 +198,7 @@ const [vol, setVol] = useState(1);
         setLoading1(true)
         try{
           const result =await axios.post(`${serverUrl}/api/content/video/${videoId}/add-comment`,{message:newComment},{withCredentials:true})
-          setComment(result.data?.comments)
+          setComment(prev=>[result.data?.comments.slice(-1)[0], ...prev ])
           console.log(result.data.comments)
           setLoading1(false)
           setNewComments("")
@@ -324,7 +324,31 @@ const [vol, setVol] = useState(1);
                 <div className='space-y--3'>
                     {comment?.map((comment)=>(
                         <div key={comment?._id} className='p-3 bg-[1a1a1a] rounde-lg shadow-sm text-sm'>
-                            <p>{comment?.message}</p>
+                            <div className='flex items-center justify-start gap-1'>
+                                <img src={comment?.author?.photoUrl} className='w-8 h-8 rounded-full object-cover' alt="" />
+                                <h2 className='text-[13px]'>@{comment?.author?.userName.toLowerCase()}</h2>
+                            </div>
+                            <p className='font-medium px-[20px] py-[20px]'>{comment?.message}</p>
+
+                            <div className='ml-4 mt-2 space-y-2'>
+                                {
+                                    comment?.replies.map((reply)=>(
+                                        <div key={reply._id} className='p-2 bg-[#2a2a2a] rounded'>
+                                            <div className='flex items-center justify-start gap-1'>
+                                                <img src={reply?.author?.photoUrl} className='w-6 h-6 rounded-full object-cover' alt="" />
+                                                <h2 className='text-[13px]'>@{reply?.author?.userName.toLowerCase()}</h2>
+                                                <p className='px-[20px] py-[20px]'>{reply?.message}</p>
+
+                                            </div>
+
+                                            
+
+                                        </div>
+                                    ))
+                                }
+                            </div>
+
+                            <ReplySection comment={comment} handleReply={handleReply} loading3={loading3}/>
                         </div>
                     ))}
                 </div>
@@ -363,6 +387,30 @@ const [vol, setVol] = useState(1);
       
     </div>
   )
+}
+
+const ReplySection = ({comment, handleReply , loading3}) =>{
+
+    const [replyText,setReplyText] = useState("")
+    const [showReplyInput, setShowReplyInput] = useState(false)
+
+
+
+    return(
+        <div className='mt-3'>
+            {showReplyInput &&
+            <div className='flex gap-2 mt-1 ml-4'>
+                <input type="text"placeholder='Add a reply...'
+                onChange={(e)=>setReplyText(e.target.value)}
+                value={replyText} className='flex-1 border border-gray-700 bg-[#1a1a1a] text-white rounded-lg px-2 py-1 focus:outline-none focus:ring-1 focus:ring-orange-600 text-sm'  />
+                <button onClick={()=>{handleReply({commentId:comment._id, replyText:replyText}); setShowReplyInput(false); setReplyText(" ")}} 
+                disabled={loading3} className='bg-orange-600 hover:bg-orange-700 text-white px-3 rounded-lg text-sm'>{loading3?<ClipLoader size={20} color='black'/>:"Reply"}</button>
+            </div> }
+            <button onClick={()=>setShowReplyInput(!showReplyInput)} className='ml-4 text-xs text-gray-400 mt-1'>reply</button>
+
+
+        </div>
+    )
 }
 
 export default PlayVideo

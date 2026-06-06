@@ -24,7 +24,7 @@ contentRouter.put("/video/:videoId/toggle-save",isAuth,toggleSave)
 contentRouter.put("/video/:videoId/add-view",getViews)
 
 contentRouter.post("/video/:videoId/add-comment",isAuth,addComment)
-contentRouter.post("video/:videoId/:commentId",isAuth,addReply)
+contentRouter.post("video/:videoId/:commentId/add-reply",isAuth,addReply)
 
 // short routes
 contentRouter.post(
