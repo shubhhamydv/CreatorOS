@@ -80,6 +80,7 @@ function AllVideosPage() {
           duration={durations[video?._id] || "0:00"}
           views={video?.views}
           id={vide?._id}
+          views={video?.views}
         />
       ))}
     </div>

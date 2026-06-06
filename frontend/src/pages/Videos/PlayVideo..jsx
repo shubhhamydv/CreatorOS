@@ -14,6 +14,8 @@ import axios from 'axios';
 import { serverUrl } from '../../App';
 import { linkWithCredential } from 'firebase/auth';
 import { setChannelData } from '../../redux/userSlice';
+import { ClipLoader } from 'react-spinners';
+import { setAllVideosData } from '../../redux/contentSlice';
 const IconButton = ({ icon: Icon, active, label, count, onClick }) => (
     <button className='flex flex-col items-center' onClick={onclick}>
         <div
@@ -52,6 +54,10 @@ const [vol, setVol] = useState(1);
     const suggestedShotrs = AllShortsData?.slice(0,10 || [])
     const {userData} = useSelector(state=>state.user)
     const [loading,setLoading] = useState(false)
+     const [loading1,setLoading1] = useState(false)
+      const [loading3,setLoading3] = useState(false)
+    const [comment,setComment] = useState([])
+    cont [newComment,setComment]=useState("")
     const dispatch = useDispatch()
     const [isSubscribed,setIsSubscribed] = useState(channel?.subscribers?.some((sub)=>sub._id.toString() === userData._id?.toString() || sub?.toString() ===userData._id?.toString()))
     useEffect(()=>{
@@ -65,8 +71,20 @@ const [vol, setVol] = useState(1);
         if(currentVideo){
             setVideo(currentVideo)
             setChannel(currentVideo.channel)
+            setComment(currentVideo?.comments)
         }
 
+        const addViews = async ()=>{
+            try{
+             const result = await axios.put(`${serverUrl} +/api/content/video/${videoId}/add-view`,{},{withCredential:true})
+             setVideo((prev)=>prev ? {...prev , views:result.data.views}:prev)
+             const updatedVideo = allVideosData.map((v)=>v._id === videoId ? {...v , views:result.data.views}:v)
+             dispatch(setAllVideosData(updatedVideo))
+            }catch(error){
+                consolelog(error)
+            }
+        }
+        addViews()
     },[videoId, allVideosData])
 
     const handleUpdateTime = ()=>{
@@ -145,13 +163,73 @@ const [vol, setVol] = useState(1);
            setLoading(false)
         }
 
+    }
+    const toggleLike = async ()=>{
+        try{
+          const result = await axios.put(`${serverUrl}/api/content/video/${videoId}/toggle-like`,{},{withCredentials:true})
+          setVideo(result.data)
+          console.log(result.data)
+        } catch(error){
+
+        }
+    }
+
+      const toggleDislike = async ()=>{
+        try{
+          const result = await axios.put(`${serverUrl}/api/content/video/${videoId}/toggle-dislike`,{},{withCredentials:true})
+          setVideo(result.data)
+          console.log(result.data)
+        } catch(error){
+
+        }
+    }
+      const toggleSave = async ()=>{
+        try{
+          const result = await axios.put(`${serverUrl}/api/content/video/${videoId}/toggle-save`,{},{withCredentials:true})
+          setVideo(result.data)
+          console.log(result.data)
+        } catch(error){
+
+        }
+    }
+
+    const haddleAddComment = async ()=>{
+        if(!newComment)return;
+        setLoading1(true)
+        try{
+          const result =await axios.post(`${serverUrl}/api/content/video/${videoId}/add-comment`,{message:newComment},{withCredentials:true})
+          setComment(result.data?.comments)
+          console.log(result.data.comments)
+          setLoading1(false)
+          setNewComments("")
+        } catch(error){
+       console.log(error)
+       setLoading1(false)
+        }
+    }
+
+    const haddleReply = async ({commentId,replyText})=>{
+        if(!replyText)return;
+        setLoading3(true)
+        try {
+             const result =await axios.post(`${serverUrl}/api/content/video/${videoId}/${commentId}/add-reply`,{message:replyText},{withCredentials:true})
+          setComment(result.data?.comments)
+          console.log(result.data.comments)
+          setLoading3(false)
+        } catch (error) {
+               console.log(error)
+       setLoading3(false)
+        }
+    }
+
+    
+
+    
         useEffect(()=>{
 
             setIsSubscribed(channel?.subscribers?.some((sub)=>sub._id?.toString() === userData._id?.toString() || sub?.toString() ===userData._id?.toString()))
 
         },[channel?.subscribers , userData?._id])
-    }
-
   return (
     <div className='flex bg-[#0f0f0f] text-white flex-col lg:flex-row gap-6 p-4 lg:p-6'>
 
@@ -221,15 +299,15 @@ const [vol, setVol] = useState(1);
                         <h1 className='text-md font-bold'>{channel?.name}</h1>
                         <h3 className='text-[13px]'>{channel?.subscribers.length}</h3>
                     </div>
-                   <button onClick={handleSubscribe} className={`px-[20px] py-[8px] rounded-4xl border border-gray-600 ml-[20px] text-md ${isSubscribed ? "bg-black text-white hover:bg-orange-600 hover:text-black" : "bg-white text-black hover:bg-orange-600 hover:text-black"} `}>{isSubscribed ? "Subscribed":Subscribe}</button> 
+                   <button onClick={handleSubscribe} className={`px-[20px] py-[8px] rounded-4xl border border-gray-600 ml-[20px] text-md ${isSubscribed ? "bg-black text-white hover:bg-orange-600 hover:text-black" : "bg-white text-black hover:bg-orange-600 hover:text-black"} `}>{loading? <ClipLoader size={20} color='black'/> : isSubscribed ? "Subscribed":Subscribe}</button> 
                 </div>
-                <div className='flex items-center gap-6 mt-3'><IconButton icon={FaThumbsUp} label={"Likes"} active={video?.likes.include(userData._id)} count={video?.likes?.length}/>
-                <IconButton icon={FaThumbsUp} label={"Dislikes"} active={video?.likes.include(userData._id)} count={video?.dislikes?.length}/>
+                <div className='flex items-center gap-6 mt-3'><IconButton icon={FaThumbsUp} label={"Likes"} active={video?.likes.include(userData._id)} count={video?.likes?.length} onClick={toggleLike}/>
+                <IconButton icon={FaThumbsUp} label={"Dislikes"} active={video?.likes.include(userData._id)} count={video?.dislikes?.length} onClick={toggleDislike}/>
                 <IconButton icon={FaDownload} label={"Download"} onClick={()=>{
                     const link  = document.createElement("a"); link.href = video?.videoUrl;
                     link.download =`${video?.title}.mp4`; link.click();
                 }} />
-                <IconButton icon={FaBookmark} label={"Save"} active={video?.saveBy.include(userData._id)} />
+                <IconButton icon={FaBookmark} label={"Save"} active={video?.saveBy.include(userData._id)} onClick={toggleSave} />
                
                 </div>
             </div>
@@ -240,8 +318,15 @@ const [vol, setVol] = useState(1);
             <div className='mt-6'>
                 <h2 className='text-lg font-semibold mb-3'> Comments</h2>
                 <div className='flex gap-2 mb-4'>
-                    <input type=" text" placeholder='Add a comment...' className='flex-1  border-gray-700 bg-[#1a1a1a] text-white rounded-e-lg px-3 py-2 focus:outline-none  focus:ring-1 focus:ring-red-600' />
-                    <button className='bg-orange-600 hover:bg-orange-700 text-white pd-4 py-2 rounded-lg '>Post</button>
+                    <input type=" text" placeholder='Add a comment...' className='flex-1  border-gray-700 bg-[#1a1a1a] text-white rounded-e-lg px-3 py-2 focus:outline-none  focus:ring-1 focus:ring-red-600'onChange={(e)=>setNewComments(e.target.value)} value={newComment} />
+                    <button className='bg-orange-600 hover:bg-orange-700 text-white pd-4 py-2 rounded-lg 'disabled={loading1} onClick={haddleAddComment}>{loading?<ClipLoader size={20} color='black'/>:"Post"}</button>
+                </div>
+                <div className='space-y--3'>
+                    {comment?.map((comment)=>(
+                        <div key={comment?._id} className='p-3 bg-[1a1a1a] rounde-lg shadow-sm text-sm'>
+                            <p>{comment?.message}</p>
+                        </div>
+                    ))}
                 </div>
             </div>
         </div>

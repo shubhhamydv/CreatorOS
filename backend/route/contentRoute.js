@@ -1,7 +1,7 @@
 import express from "express";
 import isAuth from "../middleware/isAuth.js";
 import upload from "../middleware/multer.js";
-import { createVideo, getAllVideos } from "../controller/videoController.js";
+import { addComment, addReply, createVideo, getAllVideos, getViews, toggleDislikes, toggleLikes, toggleSave } from "../controller/videoController.js";
 import { getAllShorts, uploadShort } from "../controller/shortController.js";
 
 const contentRouter = express.Router();
@@ -18,6 +18,13 @@ contentRouter.post(
 );
 
 contentRouter.get("/getallvideos", isAuth,getAllVideos)
+contentRouter.put("/video/:videoId/toggle-like",isAuth,toggleLikes)
+contentRouter.put("/video/:videoId/toggle-dislike",isAuth,toggleDislikes)
+contentRouter.put("/video/:videoId/toggle-save",isAuth,toggleSave)
+contentRouter.put("/video/:videoId/add-view",getViews)
+
+contentRouter.post("/video/:videoId/add-comment",isAuth,addComment)
+contentRouter.post("video/:videoId/:commentId",isAuth,addReply)
 
 // short routes
 contentRouter.post(
