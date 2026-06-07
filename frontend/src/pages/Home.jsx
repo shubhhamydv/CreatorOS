@@ -276,7 +276,7 @@ function Home() {
       {popup && <Profile />}
 
 {/* Home Page Videos */}
-{location.pathname === "/" && <AllVideosPage /> , <AllShortsPage/>}
+{location.pathname === "/" && <><AllShortsPage /><AllVideosPage /></>}
 
 <div className='mt-2'>
   <Outlet />

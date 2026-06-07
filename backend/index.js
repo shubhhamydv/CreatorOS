@@ -1,6 +1,7 @@
 import express from "express";
 import dotenv from "dotenv";
 import { fileURLToPath } from "url";
+import path from "path";
 
 dotenv.config({
     path: fileURLToPath(new URL("./.env", import.meta.url))
@@ -22,7 +23,9 @@ const app = express();
 app.use(cookieParser());
 app.use(express.json());
 
-app.use("/public", express.static("public"));
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+app.use("/public", express.static(path.join(__dirname, "public")));
 
 app.use(cors({
     origin: (origin, callback) => {

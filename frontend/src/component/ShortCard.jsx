@@ -15,7 +15,7 @@ const ShortCard = ({shortUrl,title,channelName,avatar,views,id}) => {
         
 
       </div>
-      <p className='text-xm text-gray-400'>0{views}</p>
+      <p className='text-xm text-gray-400'>{views || 0} views</p>
     </div>
   )
 }

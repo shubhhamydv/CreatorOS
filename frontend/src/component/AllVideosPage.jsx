@@ -79,7 +79,7 @@ function AllVideosPage() {
           channelName={video?.channel?.name}
           duration={durations[video?._id] || "0:00"}
           views={video?.views}
-          id={vide?._id}
+          id={video?._id}
           views={video?.views}
         />
       ))}
