@@ -6,7 +6,8 @@ const userSlice = createSlice({
 
     initialState: {
         userData: null,
-        channelData: null
+        channelData: null,
+        allChanneldata:null
     },
 
     reducers: {
@@ -17,6 +18,9 @@ const userSlice = createSlice({
 
         setChannelData: (state, action) => {
             state.channelData = action.payload
+        },
+        setAllChannelData:(state,action)=>{
+            state.allChanneldata=action.payload
         }
 
     }
@@ -25,7 +29,8 @@ const userSlice = createSlice({
 
 export const {
     setUserData,
-    setChannelData
+    setChannelData,
+    setAllChannelData
 } = userSlice.actions
 
 export default userSlice.reducer

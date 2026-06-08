@@ -8,17 +8,17 @@ const contentRouter = express.Router();
 
 // video routes
 contentRouter.post("/create-video", isAuth, upload.fields([{ name: "video", maxCount: 1 }, { name: "thumbnail", maxCount: 1 }]), createVideo);
-contentRouter.get("/getallvideos", isAuth, getAllVideos);
+contentRouter.get("/getallvideos", getAllVideos);
 contentRouter.put("/video/:videoId/toggle-like", isAuth, toggleLikes);
 contentRouter.put("/video/:videoId/toggle-dislike", isAuth, toggleDislikes);
 contentRouter.put("/video/:videoId/toggle-save", isAuth, toggleSave);
 contentRouter.put("/video/:videoId/add-view", getViews);
 contentRouter.post("/video/:videoId/add-comment", isAuth, addComment);
-contentRouter.post("/video/:videoId/:commentId/add-reply", isAuth, addReply);  // FIX: added leading /
+contentRouter.post("/video/:videoId/:commentId/add-reply", isAuth, addReply);
 
 // short routes
 contentRouter.post("/create-short", isAuth, upload.single("shortUrl"), uploadShort);
-contentRouter.get("/getallshorts", isAuth, getAllShorts);
+contentRouter.get("/getallshorts", getAllShorts);
 contentRouter.put("/short/:shortId/toggle-like", isAuth, toggleLikes1);
 contentRouter.put("/short/:shortId/toggle-dislike", isAuth, toggleDislikes1);
 contentRouter.put("/short/:shortId/toggle-save", isAuth, toggleSave1);

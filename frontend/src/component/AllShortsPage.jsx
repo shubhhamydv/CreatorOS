@@ -15,7 +15,7 @@ function AllShortsPage() {
                     <ShortCard 
                     shortUrl={short?.shortUrl}
                     title={short?.title}
-                    avatar = {short?.channel?.avatar}
+                    avatar={short?.channel?.avatar}
                     channelName={short?.channel?.name}
                     views={short?.views}
                     id={short?._id}
@@ -23,7 +23,6 @@ function AllShortsPage() {
                 </div>
             ))}
         </div>
-      
     </div>
   )
 }
