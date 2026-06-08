@@ -4,6 +4,30 @@ import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { ClipLoader } from "react-spinners";
 import { serverUrl } from "../../App";
+import VideoCard from "../../component/VideoCard";
+import ShortCard from "../../component/ShortCard";
+import PlaylistCard from "../../component/PlaylistCard";
+
+const getVideoDuration = (url, callback) => {
+  const video = document.createElement("video");
+  video.preload = "metadata";
+
+  video.onloadedmetadata = () => {
+    window.URL.revokeObjectURL(video.src);
+
+    const totalSeconds = Math.floor(video.duration);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+
+    callback(`${minutes}:${seconds.toString().padStart(2, "0")}`);
+  };
+
+  video.onerror = () => {
+    callback("0:00");
+  };
+
+  video.src = url;
+};
 
 function ChannelPage() {
   const { channelId } = useParams();
@@ -41,6 +65,23 @@ function ChannelPage() {
       )
     );
   }, [channel?.subscribers, userData?._id]);
+
+  const [durations, setDurations] = useState({});
+  
+    useEffect(() => {
+      if (Array.isArray(channel?.videos) && channel?.videos.length > 0) {
+        channel?.videos.forEach((video) => {
+          if (video?.videoUrl && video?._id) {
+            getVideoDuration(video.videoUrl, (formattedTime) => {
+              setDurations((prev) => ({
+                ...prev,
+                [video._id]: formattedTime,
+              }));
+            });
+          }
+        });
+      }
+    }, [ channel?.videos]);
 
   const handleSubscribe = async () => {
     if (!channel?._id) return;
@@ -155,8 +196,77 @@ function ChannelPage() {
         )}
       </div>
 
+      {/* in video lecture code written like this */}
+
+      <div className="px-6 space-y-8">
+        {activeTab ==="videos"  &&(
+          <div className="felx flex-wrap gap-5 pb-[40px]">
+            {channel?.videos?.map((video) =>(
+              <VideoCard
+              key={v._id}
+              id={v._id}
+              thumbnail={v.thumbnail}
+              duration={durations[video?._id] || "0:00"}
+              channelLogo={channel.avatar}
+              title={v.title}
+              channelName={channel.name}
+              views={v.views}
+              
+              />
+            ))}
+
+          </div>
+        )}
+
+        {activeTab === "Shorts" && (
+          <div className="flex gap-4 flex-wrap">
+            {
+              channel.shorts?.map((short)=>(
+                <ShortCard
+                key={short._id}
+                id={short._id}
+                shortUrl={short.shortUrl}
+                title={short.title}
+                channelName={channel.name}
+                views={short.views}
+                avatar={channel.avatar}
+                />
+              ))}
+          </div>
+        )}
+
+        {activeTab === "Playlists" && (
+          <div className="flex gap-4 flex-wrap">
+            {
+              channel.Playlists?.map((p)=>(
+                <PlaylistCard
+                key={p._id}
+                id={p._id}
+                 
+                title={p.title}
+                videos={p.videos}
+                savedBy={p.saveBy}
+                />
+              ))}
+          </div>
+        )}
+
+         {activeTab === "Community" && (
+          <div className="flex gap-4 flex-wrap">
+            {
+              channel?.posts?.map((p)=>(
+                <PostCard
+                key={p._id}
+                post={p}
+              
+                />
+              ))}
+          </div>
+        )}
+         </div>
+         
       {/* Content */}
-      <div className="px-6">
+      <div className="px-6 space-y-8">
         {activeTab === "videos" && (
           <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {channel?.videos?.map((video) => (
