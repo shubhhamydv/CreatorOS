@@ -49,11 +49,12 @@ function CreateShort() {
       { withCredentials: true }
     );
 
-    dispatch(setAllShortsData([...allShortsData, result.data]));
+    const shortData = result.data.short || result.data;
+    dispatch(setAllShortsData([...allShortsData, shortData]));
 
     const updatedChannel = {
       ...channelData,
-      shorts: [...(channelData?.shorts || []), result.data],
+      shorts: [...(channelData?.shorts || []), shortData],
     };
 
     dispatch(setChannelData(updatedChannel));

@@ -25,7 +25,10 @@ export const createVideo = async (req, res) => {
       tags: parseTag, videoUrl: uploadedVideo, thumbnail: uploadedThumbnail
     })
     await Channel.findByIdAndUpdate(channelData._id, { $push: { videos: newVideo._id } }, { new: true })
-    return res.status(201).json(newVideo)
+    
+    // Populate channel reference before returning
+    const populatedVideo = await newVideo.populate("channel")
+    return res.status(201).json(populatedVideo)
   } catch (error) {
     return res.status(500).json({ message: `failed to create video ${error}` })
   }
@@ -134,3 +137,36 @@ export const addReply = async (req, res) => {
     return res.status(500).json({ message: `error adding reply ${error}` })
   }
 }
+
+
+export const getLikedVideo = async(req,res)=>{
+  try {
+    const userId = req.userId
+
+    const likedVideo = await Video.find({likes:userId}).populate("channel", "name avatar")
+    .populate("likes","username");
+    if(!likedVideo){
+      return res.status(400).json({message:'Failed to get liked Video' })
+    }
+    return res.status(200).json(likedVideo)
+  } catch (error) {
+    return res.status(500).json({ message: `error to find liked video ${error}` })
+  }
+}
+
+export const getSaveVideo = async (req,res)=>{
+  try {
+    const userId = req.userId
+
+    const likedVideo = await Video.find({saveBy:userId}).populate("channel", "name avatar")
+    .populate("likes","username");
+    if(!SavedVideo){
+      return res.status(400).json({message:'Failed to get save Video' })
+    }
+    return res.status(200).json(SavedVideo)
+  } catch (error) {
+    return res.status(500).json({ message: `error to find save video ${error}` })
+  }
+}
+
+

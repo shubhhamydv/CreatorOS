@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { useLocation, useNavigate } from 'react-router-dom'
 import { useSelector } from "react-redux";
 import { FaPlay, FaPause, FaComment, FaThumbsUp, FaThumbsDown, FaDownload, FaBookmark } from "react-icons/fa";
 import { FaArrowDown } from "react-icons/fa";
@@ -6,7 +7,6 @@ import Describtion from "../../component/Describtion";
 import axios from "axios";
 import { serverUrl } from "../../App";
 import { ClipLoader } from "react-spinners";
-import { useNavigation } from "react-router-dom";
 
 const IconButton = ({ icon: Icon, active, label, count, onClick }) => (
     <button className='flex flex-col items-center gap-1' onClick={onClick}>
@@ -30,6 +30,8 @@ function Shorts() {
     const [newComment, setNewComment] = useState("")
 
     const shortRefs = useRef([])
+    const containerRef = useRef(null)
+    const location = useLocation()
     const navigate = useNavigate()
 
     const handleSubscribe = async (channelId) => {
@@ -87,8 +89,20 @@ function Shorts() {
 
     useEffect(() => {
         if (!allShortsData || allShortsData.length === 0) return;
-        const shuffled = [...allShortsData].sort(() => Math.random() - 0.5)
-        setShortList(shuffled)
+        // Check for shortId in query string
+        const params = new URLSearchParams(location.search)
+        const shortId = params.get('shortId')
+
+        let listToSet = [...allShortsData]
+        // If no specific short requested, shuffle the list for variety
+        if (!shortId) {
+            listToSet = listToSet.sort(() => Math.random() - 0.5)
+        }
+
+        setShortList(listToSet)
+        console.log("Shorts effect: shortId=", shortId, "list length=", listToSet.length)
+        console.log("Short IDs:", listToSet.map(s=>s._id))
+
         // Load existing comments from fetched data
         const existingComments = {}
         allShortsData.forEach((short) => {
@@ -97,7 +111,22 @@ function Shorts() {
             }
         })
         setComment(existingComments)
-    }, [allShortsData])
+
+        // If a shortId is present, scroll to it after a tick
+        if (shortId) {
+            setTimeout(() => {
+                const index = listToSet.findIndex(s => s._id === shortId)
+                if (index >= 0 && containerRef.current) {
+                    // Find the child element with snap-start class at the index and scroll it into view
+                    const children = containerRef.current.querySelectorAll('.snap-start')
+                    const el = children[index]
+                    if (el && el.scrollIntoView) el.scrollIntoView({ behavior: 'smooth' })
+                } else {
+                    console.warn("Requested shortId not found in listToSet:", shortId)
+                }
+            }, 100)
+        }
+    }, [allShortsData, location.search])
 
     useEffect(() => {
         const observer = new IntersectionObserver((entries) => {
@@ -131,8 +160,33 @@ function Shorts() {
         else { video.pause(); setPlayIndex(index) }
     }
 
+    // If deep-linked to a short but shorts data hasn't loaded yet, show loader
+    const paramsCheck = new URLSearchParams(location.search)
+    const deepShortId = paramsCheck.get('shortId')
+
+    // If deep-linked but data not loaded yet, show loader
+    if (deepShortId && (!allShortsData || allShortsData.length === 0)) {
+        return (
+            <div className="h-screen w-full flex items-center justify-center">
+                <ClipLoader size={40} color="white" />
+            </div>
+        )
+    }
+
+    // If deep-linked and data loaded but short not found, show friendly message
+    if (deepShortId && allShortsData && allShortsData.length > 0) {
+        const exists = allShortsData.some(s => s._id === deepShortId)
+        if (!exists) {
+            return (
+                <div className="h-screen w-full flex items-center justify-center text-white">
+                    <div className="bg-[#121212] p-6 rounded-lg shadow">Requested short not found.</div>
+                </div>
+            )
+        }
+    }
+
     return (
-        <div className="h-screen w-full overflow-y-scroll snap-y snap-mandatory">
+        <div ref={containerRef} className="h-screen w-full overflow-y-scroll snap-y snap-mandatory">
             {shortList?.map((short, index) => (
                 <div key={short?._id} className="min-h-screen flex justify-center items-center snap-start">
                     <div className="relative w-[350px] aspect-[9/16] bg-black rounded-2xl overflow-hidden" onClick={() => togglePlay(index)}>

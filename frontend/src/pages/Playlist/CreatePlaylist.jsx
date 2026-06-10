@@ -7,7 +7,7 @@ import { ClipLoader } from 'react-spinners'
 import Describtion from '../../component/Describtion'
 import { showCustomAlert } from '../../component/CustomAlert'
 import { setChannelData } from '../../redux/userSlice'
-import { serverUrl } from '../../main'
+import { serverUrl } from '../../App'
 
 function CreatePlaylist() {
   const [title, setTitle] = useState('')

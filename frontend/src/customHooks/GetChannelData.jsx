@@ -42,7 +42,7 @@ const GetChannelData = () => {
         console.log("GET ALL CHANNELS RUNNING");
 
         const result = await axios.get(
-          `${serverUrl}/api/user/allgetchannel`,
+          `${serverUrl}/api/user/allchannel`,
           {
             withCredentials: true,
           }

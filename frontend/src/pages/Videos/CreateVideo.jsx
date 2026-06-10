@@ -5,6 +5,8 @@ import { useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { ClipLoader } from 'react-spinners'
 import axios from 'axios'
+import { setAllVideosData } from '../../redux/contentSlice'
+import { setChannelData } from '../../redux/userSlice'
 
 function CreateVideo() {
   const { channelData } = useSelector((state) => state.user)

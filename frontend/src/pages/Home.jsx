@@ -226,7 +226,7 @@ function Home() {
             text={"Saved Videos"}
             open={sidebarOpen}
             selected={selectedItem === "Saved Videos"}
-            onClick={() => setSelectedItem("Saved Videos")}
+            onClick={() =>{ setSelectedItem("Saved Videos");navigate("/savedcontent")}}
           />
 
           <SidebarItem
@@ -234,7 +234,7 @@ function Home() {
             text={"Liked Videos"}
             open={sidebarOpen}
             selected={selectedItem === "Liked Videos"}
-            onClick={() => setSelectedItem("Liked Videos")}
+            onClick={() => {setSelectedItem("Liked Videos");navigate("/likedcontent")}}
           />
 
         </nav>

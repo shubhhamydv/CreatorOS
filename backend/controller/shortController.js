@@ -45,9 +45,12 @@ export const createShort = async (req, res) => {
       { new: true }
     );
 
+    // Populate channel reference before returning
+    const populatedShort = await newShort.populate("channel");
+
     return res.status(201).json({
       success: true,
-      short: newShort,
+      short: populatedShort,
     });
   } catch (error) {
     console.error("CREATE SHORT ERROR:", error);
@@ -245,3 +248,35 @@ export const addReply1 = async (req,res)=>{
    return res.status(500).json({message:`error adding reply ${error}`})
   }
 }
+
+export const getLikedShort = async(req,res)=>{
+  try {
+    const userId = req.userId
+
+    const likedShort = await Short.find({likes:userId}).populate("channel", "name avatar")
+    .populate("likes","username");
+    if(!likedShort){
+      return res.status(400).json({message:'Failed to get liked shorts' })
+    }
+    return res.status(200).json(likedShort)
+  } catch (error) {
+    return res.status(500).json({ message: `error to find liked short${error}` })
+  }
+}
+
+
+export const getSavedShort = async(req,res)=>{
+  try {
+    const userId = req.userId
+
+    const SavedShort = await Short.find({savedBy:userId}).populate("channel", "name avatar")
+    .populate("likes","username");
+    if(!SavedShort){
+      return res.status(400).json({message:'Failed to get saved shorts' })
+    }
+    return res.status(200).json(SavedShort)
+  } catch (error) {
+    return res.status(500).json({ message: `error to find saved short${error}` })
+  }
+}
+

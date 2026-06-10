@@ -137,9 +137,9 @@ function MobileProfile() {
 
         <ProfileMenuItem icon={<FaList />} text={"Playlist"} />
 
-        <ProfileMenuItem icon={<GoVideo />} text={"Saved Videos"} />
+        <ProfileMenuItem icon={<GoVideo />} text={"Saved Videos"} onClick={()=>navigate("/savedcontent")} />
 
-        <ProfileMenuItem icon={<FaThumbsUp />} text={"Liked Videos"} />
+        <ProfileMenuItem icon={<FaThumbsUp />} text={"Liked Videos"} onClick={navigate("/likedcontent")}/>
 
         <ProfileMenuItem icon={<SiYoutubestudio />} text={"PT Studio"} />
 

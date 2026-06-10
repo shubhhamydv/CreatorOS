@@ -1,8 +1,14 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 
 const ShortCard = ({shortUrl,title,channelName,avatar,views,id}) => {
+  const navigate = useNavigate()
+  const openShort = () => {
+    navigate(`/shorts?shortId=${id}`)
+  }
+
   return (
-    <div className='w-45 sm:w-49 cursor-pointer relative'>
+    <div onClick={openShort} className='w-45 sm:w-49 cursor-pointer relative'>
       <div className='roundded-x1 overflow-hidden bg-black w-full h-70 border-1 border-gray-700]'>
         <video src={shortUrl} className='w-full h-full object-cover' muted playsInline onContextMenu={(e)=>e.preventDefault()} preload='metadata'/>
       </div>
