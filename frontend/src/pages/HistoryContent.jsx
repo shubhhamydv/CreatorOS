@@ -6,6 +6,7 @@ import ShortCard from '../component/ShortCard'
 import { GoVideo } from 'react-icons/go'
 import VideoCard from '../component/VideoCard'
 import Video from '../../../backend/model/videoModel'
+import { useSelector } from 'react-redux'
 const getVideoDuration = (url, callback) => {
   const video = document.createElement("video");
   video.preload = "metadata";
@@ -28,12 +29,13 @@ const getVideoDuration = (url, callback) => {
 };
 
 function HistoryContent() {
+    const {videoHistory,shortHistory} = useSelector(state=>state.user)
   
     const [durations, setDurations] = useState({});
     
       useEffect(() => {
-        if (Array.isArray(likedVideo) && likedVideo.length > 0) {
-          likedVideo.forEach((video) => {
+        if (Array.isArray(videoHistory) && videoHistory.length > 0) {
+          videoHistory.forEach((video) => {
             if (video?.videoUrl && video?._id) {
               getVideoDuration(video.videoUrl, (formattedTime) => {
                 setDurations((prev) => ({
@@ -44,7 +46,7 @@ function HistoryContent() {
             }
           });
         }
-      }, [allVideosData]);
+      }, [videoHistory]);
 
 
     useEffect(()=>{
@@ -64,21 +66,21 @@ function HistoryContent() {
         fetchLikedContent()
     })
 
-     if((!likedShort && ! likedVideo || (likedShort.length === 0 && likedVideo.length ===0))){
+     if((!videoHistory && ! shortHistory || (videoHistory.length === 0 && shortHistory.length ===0))){
         return(
             <div className='flex justify-center items-center h-[70px] text-gray-400 text-x1 '>No liked content Found</div>
         )
     }
   return (
     <div className='px-6 py-4 min-h-screen mt-[50px] lg:mt-[20px]'>
-        {likedShort.length && (
+        {shortHistory.length && (
             <>
             <h2 className='text-2x1 font-bold mb-6 pt-[50px] border-b border-gray-300 flex items-center gap-2'>
-            <SiYoutubeshorts/>   Liked Shorts </h2>
+            <SiYoutubeshorts/>   Shorts </h2>
             
             <div className='flex gap-4 overflow-x-hidden pb-4 scrollbar-hide '>
 
-                {likedShort?.map((short)=>(
+                {shortHistory?.map((short)=>(
                     <div key={short?._id} className='flex-shrink-0'>
                         <ShortCard
                         shortUrl={short?.shortUrl}
@@ -94,14 +96,14 @@ function HistoryContent() {
             </>
         ) }
 
-  {likedVideo.length && (
+  {videoHistory.length && (
             <>
             <h2 className='text-2x1 font-bold mb-6 pt-[50px] border-b border-gray-300 flex items-center gap-2'>
-            <GoVideo/>   Liked Video </h2>
+            <GoVideo/> Video </h2>
             
             <div className='flex gap-4 overflow-x-hidden pb-4 scrollbar-hide '>
 
-                {likedShort?.map((video)=>(
+                {shortHistory?.map((video)=>(
                     <div key={video?._id} className='flex-shrink-0'>
                         <VideoCard
                            key={VideoColorSpace._id}

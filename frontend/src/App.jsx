@@ -86,7 +86,7 @@ function App() {
 
           {/* Shorts */}
           <Route
-            path='shorts'
+            path='/shorts'
             element={
               <ProtectRoute userData={userData}>
                 <Shorts />
@@ -96,7 +96,7 @@ function App() {
 
           {/* Mobile Profile */}
           <Route
-            path='mobilepro'
+            path='/mobilepro'
             element={
               <ProtectRoute userData={userData}>
                 <MobileProfile />
@@ -106,7 +106,7 @@ function App() {
 
           {/* View Channel */}
           <Route
-            path='viewchannel'
+            path='/viewchannel'
             element={
               <ProtectRoute userData={userData}>
                 <ViewChannel />
@@ -116,7 +116,7 @@ function App() {
 
           {/* Update Channel */}
           <Route
-            path='updatechannel'
+            path='/updatechannel'
             element={
               <ProtectRoute userData={userData}>
                 <UpdateChannel />
@@ -126,7 +126,7 @@ function App() {
 
           {/* Create Video/Page */}
           <Route
-            path='create'
+            path='/create'
             element={
               <ProtectRoute userData={userData}>
                 <CreatePage />
@@ -135,7 +135,7 @@ function App() {
           />
 
           <Route
-            path='createvideo'
+            path='/createvideo'
             element={
               <ProtectRoute userData={userData}>
                 <CreateVideo />
@@ -144,7 +144,7 @@ function App() {
           />
 
 
-         <Route path="createshort" element={<CreateShort />} />
+         <Route path="/createshort" element={<CreateShort />} />
           {/* <Route
             path='createshort'
             element={
@@ -155,7 +155,7 @@ function App() {
           /> */}
 
           <Route
-            path='createplaylist'
+            path='/createplaylist'
             element={
               <ProtectRoute userData={userData}>
                 <CreatePlaylist />
@@ -164,7 +164,7 @@ function App() {
           />
 
           <Route
-            path='createpost'
+            path='/createpost'
             element={
               <ProtectRoute userData={userData}>
                 <CreatePost />
@@ -173,7 +173,7 @@ function App() {
           />
           
           <Route
-            path='channelpage/:channelId'
+            path='/channelpage/:channelId'
             element={
               <ProtectRoute userData={userData}>
                 <ChannelPage/>
@@ -184,7 +184,7 @@ function App() {
         </Route>
 
         <Route
-            path='likedcontent'
+            path='/likedcontent'
             element={
               <ProtectRoute userData={userData}>
                 <LikedContent/>
@@ -193,7 +193,7 @@ function App() {
           />
 
           <Route
-            path='savedcontent'
+            path='/savedcontent'
             element={
               <ProtectRoute userData={userData}>
                 <SavedContent/>
@@ -203,7 +203,7 @@ function App() {
 
 
         <Route
-            path='savedplaylist'
+            path='/savedplaylist'
             element={
               <ProtectRoute userData={userData}>
                 <SavedPlaylist/>
@@ -212,14 +212,22 @@ function App() {
           />
 
           <Route
-            path='subscription'
+            path='/subscription'
             element={
               <ProtectRoute userData={userData}>
                 <Subscription/>
               </ProtectRoute>
             }
           />
-
+          
+            <Route
+            path='/history'
+            element={
+              <ProtectRoute userData={userData}>
+                <HistoryContent/>
+              </ProtectRoute>
+            }
+          />
 
 
 
