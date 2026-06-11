@@ -189,8 +189,38 @@ function Home() {
             text={"Subscriptions"}
             open={sidebarOpen}
             selected={selectedItem === "Subscriptions"}
-            onClick={() => setSelectedItem("Subscriptions")}
+            onClick={() => {setSelectedItem("Subscriptions");navigate("/subscription")}}
           />
+
+          {sidebarOpen && subscribedChannel?.length > 0 && (
+  <>
+    <hr className="border-gray-800 my-3" />
+
+    <p className="text-sm text-gray-400 px-4 mb-2">
+      Subscriptions
+    </p>
+
+    <div className="space-y-1 px-2">
+      {subscribedChannel.slice(0, 10).map((ch) => (
+        <button
+          key={ch._id}
+          onClick={() => navigate(`/channelpage/${ch._id}`)}
+          className="flex items-center gap-3 justify-start w-full p-2 rounded-lg hover:bg-[#272727] transition"
+        >
+          <img
+            src={ch?.avatar}
+            alt={ch?.name}
+            className="w-6 h-6 rounded-full object-cover"
+          />
+
+          <span className="text-sm text-white truncate">
+            {ch?.name}
+          </span>
+        </button>
+      ))}
+    </div>
+  </>
+)}
 
         </nav>
 
@@ -218,13 +248,13 @@ function Home() {
             text={"Playlists"}
             open={sidebarOpen}
             selected={selectedItem === "Playlists"}
-            onClick={() => setSelectedItem("Playlists")}
+            onClick={() =>{ setSelectedItem("Playlists");navigate("savedplaylist")}}
           />
 
           <SidebarItem
             icon={<GoVideo />}
             text={"Saved Videos"}
-            open={sidebarOpen}
+            open={sidebarOpen}a
             selected={selectedItem === "Saved Videos"}
             onClick={() =>{ setSelectedItem("Saved Videos");navigate("/savedcontent")}}
           />
@@ -322,7 +352,7 @@ function Home() {
           icon={<MdOutlineSubscriptions />}
           text={"Subscriptions"}
           active={active === "Subscription"}
-          onClick={() => setActive("Subscription")}
+          onClick={() => {setActive("Subscription");navigate("/subscription")}}
         />
 
         <MobileSizeNav

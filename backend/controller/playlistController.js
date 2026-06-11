@@ -1,3 +1,4 @@
+import { populate } from "dotenv"
 import Channel from "../model/channelModel"
 import Video from "../model/videoModel"
 
@@ -51,4 +52,22 @@ export const toggleSavePlaylist = async (req, res) => {
   } catch (error) {
     return res.status(500).json({ message: `Failed to save playlist ${error}` })
   }
+}
+
+export const getSavedPlaylist = async (req,res)=>{
+   try {
+       const userId = req.userId
+   
+       const SavedPlaylist = await Short.find({savedBy:userId}).populate("videos")
+      .populate({
+        path :"videos",
+        populate:{path:"channel"}
+       })
+       if(!SavedPlaylist){
+         return res.status(400).json({message:'Failed to get saved Playlist' })
+       }
+       return res.status(200).json(SavedPlaylist)
+     } catch (error) {
+       return res.status(500).json({ message: `error to find saved playlist${error}` })
+     }
 }

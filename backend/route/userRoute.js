@@ -1,5 +1,5 @@
 import express from "express"
-import { createChannel, getCurrentUser, getMyChannel, updateChannel,toggleSubscribe, getAllChannelData } from "../controller/userController.js"
+import { createChannel, getCurrentUser, getMyChannel, updateChannel,toggleSubscribe, getAllChannelData, getSubscribeData, addHistory, getHistory } from "../controller/userController.js"
 import isAuth from "../middleware/isAuth.js"
 import upload from "../middleware/multer.js"
 
@@ -17,4 +17,9 @@ userRouter.post("/updatechannel",isAuth,upload.fields([{name:"avatar",maxCount:1
 userRouter.post("/togglesubscribe",isAuth,toggleSubscribe)
 userRouter.
 get("/allchannel",isAuth,getAllChannelData)
+userRouter.get("/subscribed-data",isAuth,getSubscribeData)
+userRouter.post("/add-history",isAuth,addHistory)
+userRouter.get("/gethistory",isAuth,getHistory)
 export default userRouter
+
+

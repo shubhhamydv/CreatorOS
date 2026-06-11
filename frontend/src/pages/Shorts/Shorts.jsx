@@ -33,7 +33,7 @@ function Shorts() {
     const containerRef = useRef(null)
     const location = useLocation()
     const navigate = useNavigate()
-
+     const [activeIndex,setActiveIndex] = useState(0)
     const handleSubscribe = async (channelId) => {
         setLoading(true)
         try {
@@ -136,7 +136,7 @@ function Shorts() {
                 if (!video) return
                 if (entry.isIntersecting) {
                     video.muted = false
-                    video.play().catch(() => {})
+                    video.play().setActiveIndex(index)
                     const currentShortId = shortList[index]?._id
                     if (currentShortId && !viewedShort.includes(currentShortId)) {
                         handleAddView(currentShortId)
@@ -184,6 +184,33 @@ function Shorts() {
             )
         }
     }
+
+useEffect(() => {
+  const addHistory = async () => {
+    try {
+        const shortId = shortList[activeIndex]?._id
+        if(!shortId)return;
+      const res = await axios.post(
+        `${serverUrl}/api/user/add-history`,
+        {
+          contentId: shortId,
+          contentType: "Short",
+        },
+        {
+          withCredentials: true,
+        }
+      );
+
+      console.log(res.data);
+    } catch (error) {
+      console.log("Error adding short history:", error);
+    }
+  };
+
+  if (shortList.length >0  ) {
+    addHistory();
+  }
+}, [activeIndex,shortList]);
 
     return (
         <div ref={containerRef} className="h-screen w-full overflow-y-scroll snap-y snap-mandatory">

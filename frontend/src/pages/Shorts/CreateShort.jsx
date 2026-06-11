@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaCloudUploadAlt } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { serverUrl } from "../../App";
@@ -73,6 +73,31 @@ function CreateShort() {
     setLoading(false);
   }
 };
+
+useEffect(() => {
+  const addHistory = async () => {
+    try {
+      const res = await axios.post(
+        `${serverUrl}/api/user/add-history`,
+        {
+          contentId: shortId,
+          contentType: "Short",
+        },
+        {
+          withCredentials: true,
+        }
+      );
+
+      console.log(res.data);
+    } catch (error) {
+      console.log("Error adding short history:", error);
+    }
+  };
+
+  if (shortId) {
+    addHistory();
+  }
+}, [shortId]);
 
   return (
     <div className="w-full min-h-[80vh] bg-[#0f0f0f] text-white flex flex-col pt-5">

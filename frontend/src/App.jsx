@@ -26,6 +26,9 @@ import CreateShort from "./pages/Shorts/CreateShort"
 import PlayVideo from './pages/Videos/PlayVideo.'
 import ChannelPage from './pages/Channel/ChannelPage'
 import LikedContent from './pages/LikedContent'
+import SavedPlaylist from './pages/Playlist/SavedPlaylist'
+import GetSubscribedData from './customHooks/GetSubscribedData'
+import GetHistory from './customHooks/GetHistory'
 
 export const serverUrl = "http://localhost:8000"
 
@@ -46,7 +49,14 @@ const ProtectRoute = ({ userData, children }) => {
 
 function App() {
 
+
+
   const { userData } = useSelector((state) => state.user)
+   const {userData} = useSelector(state=>state.user)
+       function channelPageWrapper() {
+        const location = useLocation();
+        retunr <ChannelPage key={location.pathname}/>
+       }
 
   return (
     <>
@@ -62,6 +72,12 @@ function App() {
 
       <GetAllContentData />
 
+      <GetSubscribedData/>
+
+      <GetHistory/>
+
+
+      
 
       <Routes>
 
@@ -185,7 +201,25 @@ function App() {
             }
           />
 
-       
+
+        <Route
+            path='savedplaylist'
+            element={
+              <ProtectRoute userData={userData}>
+                <SavedPlaylist/>
+              </ProtectRoute>
+            }
+          />
+
+          <Route
+            path='subscription'
+            element={
+              <ProtectRoute userData={userData}>
+                <Subscription/>
+              </ProtectRoute>
+            }
+          />
+
 
 
 

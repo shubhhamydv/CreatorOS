@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { useNavigate, useParams } from "react-router-dom"
+import { data, useNavigate, useParams } from "react-router-dom"
 import { FaPlay, FaPause, FaForward, FaBackward, FaVolumeUp, FaVolumeMute, FaExpand, FaThumbsUp, FaThumbsDown, FaDownload, FaBookmark } from "react-icons/fa";
 import { SiYoutubeshorts } from 'react-icons/si';
 import ShortCard from '../../component/ShortCard';
@@ -194,6 +194,31 @@ function PlayVideo() {
     }
 
 useEffect(() => {
+  const addHistory = async () => {
+    try {
+      const res = await axios.post(
+        `${serverUrl}/api/user/addhistory`,
+        {
+          contentId: videoId,
+          contentType: "Video",
+        },
+        {
+          withCredentials: true,
+        }
+      );
+
+      console.log(res.data);
+    } catch (error) {
+      console.error("Error adding history:", error);
+    }
+  };
+
+  if (videoId) {
+    addHistory();
+  }
+}, [videoId]);
+
+useEffect(() => {
   setIsSubscribed(
     channel?.subscribers?.some(
       (sub) =>
@@ -202,6 +227,8 @@ useEffect(() => {
     )
   );
 }, [channel?.subscribers, userData?._id]);
+
+
     return (
         <div className='flex bg-[#0f0f0f] text-white flex-col lg:flex-row gap-6 p-4 lg:p-6'>
             <div className='flex-1'>

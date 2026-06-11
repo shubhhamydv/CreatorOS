@@ -27,10 +27,8 @@ const getVideoDuration = (url, callback) => {
   video.src = url;
 };
 
-function LikedContent() {
-    const [likedVideo,setLikedVideo] = useState([])
-    const [likedShort,setLikedShort] = useState([])
-
+function HistoryContent() {
+  
     const [durations, setDurations] = useState({});
     
       useEffect(() => {
@@ -125,4 +123,4 @@ function LikedContent() {
   )
 }
 
-export default LikedContent
+export default HitoryContent

@@ -3,6 +3,7 @@ import isAuth from "../middleware/isAuth.js";
 import upload from "../middleware/multer.js";
 import { addComment, addReply, createVideo, getAllVideos, getLikedVideo, getViews, toggleDislikes, toggleLikes, toggleSave } from "../controller/videoController.js";
 import { getAllShorts, toggleLikes1, toggleDislikes1, toggleSave1, getViews1, addComment1, addReply1, createShort, getLikedShort, getSavedShort } from "../controller/shortController.js";
+import { getSavedPlaylist } from "../controller/playlistController.js";
 
 const contentRouter = express.Router();
 
@@ -22,7 +23,7 @@ contentRouter.get("/savedvideo" , isAuth,getSavedVideo)
 //playlist routes
 contentRouter.post("/create-playlist" , isAuth, CreatePlaylist);
 contentRouter.post("/playlist/toggle-save", isAuth, toggleSavePlalist);
-
+contentRouter.get("/savedplaylist".isAuth,getSavedPlaylist)
 
 
 // short routes

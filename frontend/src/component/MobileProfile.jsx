@@ -135,7 +135,7 @@ function MobileProfile() {
 
         <ProfileMenuItem icon={<FaHistory />} text={"History"} />
 
-        <ProfileMenuItem icon={<FaList />} text={"Playlist"} />
+        <ProfileMenuItem icon={<FaList />} text={"Playlist"} onClick={()=>navigate("/savedplaylist")}/>
 
         <ProfileMenuItem icon={<GoVideo />} text={"Saved Videos"} onClick={()=>navigate("/savedcontent")} />
 
