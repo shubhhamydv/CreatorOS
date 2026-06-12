@@ -14,6 +14,7 @@ import {
   FaThumbsUp,
   FaSearch,
   FaMicrophone,
+  FaTimes,
 } from "react-icons/fa"
 
 import { SiYoutubeshorts } from "react-icons/si"
@@ -35,7 +36,8 @@ function Home() {
   const location = useLocation()
 
   const userData = useSelector((state) => state.user.userData)
-
+  ocnst [popup,setPopup]= useState(false)
+  const [searchPopup,setSearchPopup]= useState(false)
   const categories = [
     "All",
     "Music",
@@ -58,7 +60,17 @@ function Home() {
   ]
 
   return (
+
+
     <div className='bg-[#0f0f0f] text-white min-h-screen relative'>
+
+    {searchPopup && (
+      <div className='fixed inset-0 bg-black/70 flex items-center justify-center z-50 animate-fadeIn'>
+        <div className='bg-[#1f1f1f] backdrop-blur-md rounded-2x1 shadow-2x1 w-[90%] max-w-md min-h-[400px] sm-min-h-[480px] p-8 felx flex-col items-center justify-between gap-8 relative border border-gray-700 transition-all duration-300'>
+          <button className='absolute top-4 right-4 text-gray-400 hover:text-white transition'onClick={()=>setSearchPopup(false)}><FaTimes size={22}/></button>
+        </div>
+      </div>
+    )}
 
       {/* Navbar */}
       <header className='bg-[#0f0f0f] h-[60px] px-4 border-b border-gray-800 fixed top-0 left-0 right-0 z-50 hidden md:flex items-center justify-between'>
@@ -104,7 +116,7 @@ function Home() {
 
           </div>
 
-          <button className='bg-[#272727] p-3 rounded-full'>
+          <button className='bg-[#272727] p-3 rounded-full' onClick={()=>setSearchPopup(true)}>
             <FaMicrophone />
           </button>
 
@@ -240,7 +252,7 @@ function Home() {
             text={"History"}
             open={sidebarOpen}
             selected={selectedItem === "History"}
-            onClick={() => setSelectedItem("History")}
+            onClick={() => {setSelectedItem("History");navigate("/history")}}
           />
 
           <SidebarItem

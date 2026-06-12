@@ -133,7 +133,7 @@ function MobileProfile() {
       {/* menu items */}
       <div className='flex flex-col mt-[20px]'>
 
-        <ProfileMenuItem icon={<FaHistory />} text={"History"} />
+        <ProfileMenuItem icon={<FaHistory />} text={"History"} onClick={()=>navigate("/history")} />
 
         <ProfileMenuItem icon={<FaList />} text={"Playlist"} onClick={()=>navigate("/savedplaylist")}/>
 

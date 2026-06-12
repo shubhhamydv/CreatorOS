@@ -4,6 +4,7 @@ import upload from "../middleware/multer.js";
 import { addComment, addReply, createVideo, getAllVideos, getLikedVideo, getViews, toggleDislikes, toggleLikes, toggleSave } from "../controller/videoController.js";
 import { getAllShorts, toggleLikes1, toggleDislikes1, toggleSave1, getViews1, addComment1, addReply1, createShort, getLikedShort, getSavedShort } from "../controller/shortController.js";
 import { getSavedPlaylist } from "../controller/playlistController.js";
+import { searchWithAi } from "../controller/aiController.js";
 
 const contentRouter = express.Router();
 
@@ -38,4 +39,8 @@ contentRouter.post("/short/:shortId/:commentId/add-reply", isAuth, addReply1);
 contentRouter.get("/likedshort", isAuth,getLikedShort)
 contentRouter.get("/savedshort",isAuth,getSavedShort)
 
+
+
+//ai route
+contentRouter.post("/search" , isAuth,searchWithAi)
 export default contentRouter;
