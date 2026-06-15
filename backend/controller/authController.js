@@ -133,7 +133,7 @@ export const signOut = async (req, res) => {
         res.clearCookie("token", {
             path: "/",
             sameSite: isProd ? "none" : "lax",
-            secure: isProd
+            secure: isProd,
         })
 
         return res.status(200).json({

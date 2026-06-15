@@ -16,6 +16,7 @@ const userSlice = createSlice({
         videoHistory:null,
         shortHistory:null,
         
+        recommendedContent:null
     },
 
     reducers: {
@@ -30,26 +31,29 @@ const userSlice = createSlice({
         setAllChannelData:(state,action)=>{
             state.allChanneldata=action.payload
         },
-        subscribedChannels:(state,action)=>{
+        setSubscribedChannels:(state,action)=>{
             state.subscribedChannels=action.payload
         },
-          subscribedVideos:(state,action)=>{
+        setSubscribedVideos:(state,action)=>{
             state.subscribedVideos=action.payload
         },
-          subscribedshorts:(state,action)=>{
+        setSubscribedShorts:(state,action)=>{
             state.subscribedshorts=action.payload
         },
-          subscribedPlaylist:(state,action)=>{
+        setSubscribedPlaylist:(state,action)=>{
             state.subscribedPlaylist=action.payload
         },
-          subscribedPosts:(state,action)=>{
+        setSubscribedPosts:(state,action)=>{
             state.subscribedPosts=action.payload
         },
-           setVideoHistory:(state,action)=>{
+        setVideoHistory:(state,action)=>{
             state.videoHistory=action.payload
         },
-           setShortHistory:(state,action)=>{
+        setShortHistory:(state,action)=>{
             state.shortHistory=action.payload
+        },
+        setRecommendedContent:(state,action)=>{
+            state.recommendedContent = action.payload
         }
 
     }
@@ -61,13 +65,13 @@ export const {
     setChannelData,
     setAllChannelData,
     setSubscribedChannels,
-     setSubscribedVideo,
-     setSubscribedVideo,
-     setSubscribedShorts,
-     setSubscribedPlaylist,
-     setSubscribedPosts,
-     setVideoHistory,
-     setShortHistory
+    setSubscribedVideos,
+    setSubscribedShorts,
+    setSubscribedPlaylist,
+    setSubscribedPosts,
+    setVideoHistory,
+    setShortHistory,
+    setRecommendedContent
 
 } = userSlice.actions
 

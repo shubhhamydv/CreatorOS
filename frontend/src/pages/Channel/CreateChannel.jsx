@@ -1,10 +1,13 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { FaUserCircle } from "react-icons/fa";
 import { serverUrl } from "../../App";
+import { setChannelData } from "../../redux/userSlice";
 
 function CreateChannel() {
+    const dispatch = useDispatch();
     const navigate = useNavigate();
 
     const [step, setStep] = useState(1);
@@ -76,7 +79,7 @@ function CreateChannel() {
 
             const formData = new FormData();
 
-            formData.append("chanelname", channelName);
+            formData.append("name", channelName);
             formData.append("description", description);
             formData.append("category", category);
 
@@ -100,6 +103,10 @@ function CreateChannel() {
             );
 
             console.log(result.data);
+
+            if (result.data?.channel) {
+                dispatch(setChannelData(result.data.channel))
+            }
 
             alert("Channel Created Successfully");
 

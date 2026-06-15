@@ -1,70 +1,42 @@
-import axios from "axios";
-import { useEffect } from "react";
-import { useDispatch } from "react-redux";
-import { serverUrl } from "../App";
-import {
-  setChannelData,
-  setAllChannelData,
-} from "../redux/userSlice";
+import axios from "axios"
+import { useEffect } from "react"
+import { useDispatch } from "react-redux"
+import { serverUrl } from "../App"
+import { setChannelData, setAllChannelData } from "../redux/userSlice"
 
 const GetChannelData = () => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch()
 
-  // Get Logged-in User Channel
+  // Get logged-in user's own channel
   useEffect(() => {
     const fetchChannel = async () => {
       try {
-        console.log("GET CHANNEL DATA RUNNING");
-
-        const result = await axios.get(
-          `${serverUrl}/api/user/getchannel`,
-          {
-            withCredentials: true,
-          }
-        );
-
-        console.log("CHANNEL DATA:", result.data);
-
-        dispatch(setChannelData(result.data.channel));
+        const result = await axios.get(`${serverUrl}/api/user/getchannel`, { withCredentials: true })
+        dispatch(setChannelData(result.data?.channel || null))
       } catch (error) {
-        console.log("GET CHANNEL ERROR:", error);
-        dispatch(setChannelData(null));
+        console.log("GET CHANNEL ERROR:", error?.response?.data?.message || error.message)
+        dispatch(setChannelData(null))
       }
-    };
+    }
+    fetchChannel()
+  }, [dispatch])
 
-    fetchChannel();
-  }, [dispatch]);
-
-  // Get All Channels
+  // Get ALL channels (for ChannelPage lookups + subscriptions)
   useEffect(() => {
     const fetchAllChannels = async () => {
       try {
-        console.log("GET ALL CHANNELS RUNNING");
-
-        const result = await axios.get(
-          `${serverUrl}/api/user/allchannel`,
-          {
-            withCredentials: true,
-          }
-        );
-
-        console.log("ALL CHANNELS DATA:", result.data);
-
-        dispatch(
-          setAllChannelData(
-            result.data.channels || result.data.channel || []
-          )
-        );
+        const result = await axios.get(`${serverUrl}/api/user/allchannel`, { withCredentials: true })
+        // Bug fixed: was dispatching null on error which breaks ChannelPage
+        dispatch(setAllChannelData(result.data?.channels || []))
       } catch (error) {
-        console.log("GET ALL CHANNELS ERROR:", error);
-        dispatch(setAllChannelData(null));
+        console.log("GET ALL CHANNELS ERROR:", error?.response?.data?.message || error.message)
+        dispatch(setAllChannelData([]))
       }
-    };
+    }
+    fetchAllChannels()
+  }, [dispatch])
 
-    fetchAllChannels();
-  }, [dispatch]);
+  return null
+}
 
-  return null;
-};
-
-export default GetChannelData;
+export default GetChannelData

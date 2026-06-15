@@ -30,6 +30,11 @@ function CreatePlaylist() {
   }
 
   const handleCreatePlaylist = async () => {
+    if (!channelData?._id) {
+      showCustomAlert('Please create your channel first before creating a playlist.')
+      return
+    }
+
     if (!title.trim() || !description.trim()) {
       showCustomAlert('Please fill all fields')
       return
@@ -60,7 +65,7 @@ function CreatePlaylist() {
         ...channelData,
         playlists: [
           ...(channelData?.playlists || []),
-          result.data,
+          result.data.playlist,
         ],
       }
 
