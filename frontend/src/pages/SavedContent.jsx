@@ -9,21 +9,14 @@ import VideoCard from '../component/VideoCard'
 const getVideoDuration = (url, callback) => {
   const video = document.createElement("video")
   video.preload = "metadata"
-
   video.onloadedmetadata = () => {
     window.URL.revokeObjectURL(video.src)
-
     const totalSeconds = Math.floor(video.duration)
     const minutes = Math.floor(totalSeconds / 60)
     const seconds = totalSeconds % 60
-
     callback(`${minutes}:${seconds.toString().padStart(2, "0")}`)
   }
-
-  video.onerror = () => {
-    callback("0:00")
-  }
-
+  video.onerror = () => { callback("0:00") }
   video.src = url
 }
 
@@ -36,26 +29,23 @@ function SavedContent() {
   useEffect(() => {
     const fetchSavedContent = async () => {
       try {
-        const videoResult = await axios.get(
-          `${serverUrl}/api/content/savedvideo`,
-          { withCredentials: true }
-        )
-
-        setSavedVideo(videoResult.data || [])
-
-        const shortResult = await axios.get(
-          `${serverUrl}/api/content/savedshort`,
-          { withCredentials: true }
-        )
-
-        setSavedShort(shortResult.data || [])
+        const videoResult = await axios.get(`${serverUrl}/api/content/savedvideo`, { withCredentials: true })
+        // Backend returns { videos: [...] }
+        setSavedVideo(videoResult.data?.videos || videoResult.data || [])
       } catch (error) {
         console.log(error)
-      } finally {
-        setLoading(false)
       }
-    }
 
+      try {
+        const shortResult = await axios.get(`${serverUrl}/api/content/savedshort`, { withCredentials: true })
+        // Backend returns { shorts: [...] }
+        setSavedShort(shortResult.data?.shorts || shortResult.data || [])
+      } catch (error) {
+        console.log(error)
+      }
+
+      setLoading(false)
+    }
     fetchSavedContent()
   }, [])
 
@@ -64,10 +54,7 @@ function SavedContent() {
       savedVideo.forEach((video) => {
         if (video?.videoUrl && video?._id) {
           getVideoDuration(video.videoUrl, (formattedTime) => {
-            setDurations((prev) => ({
-              ...prev,
-              [video._id]: formattedTime,
-            }))
+            setDurations((prev) => ({ ...prev, [video._id]: formattedTime }))
           })
         }
       })
@@ -76,31 +63,28 @@ function SavedContent() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-[70vh] text-xl">
+      <div className="flex justify-center items-center h-[70vh] bg-[#0f0f0f] text-gray-400 text-xl">
         Loading...
       </div>
     )
   }
 
-  if ((!savedVideo &&  !savedShort) || (savedVideo.length === 0 && savedShort.length === 0)) {
+  if (savedVideo.length === 0 && savedShort.length === 0) {
     return (
-      <div className="flex justify-center items-center h-[70vh] text-gray-400 text-xl">
+      <div className="flex justify-center items-center h-[70vh] bg-[#0f0f0f] text-gray-400 text-xl">
         No Saved Content Found
       </div>
     )
   }
 
   return (
-    <div className="px-6 py-4 min-h-screen mt-[50px] lg:mt-[20px]">
-      
-      {/* Saved Shorts */}
+    <div className="px-6 py-4 min-h-screen bg-[#0f0f0f] text-white mt-[50px] lg:mt-[20px]">
+
       {savedShort.length > 0 && (
         <>
-          <h2 className="text-2xl font-bold mb-6 pt-[50px] border-b border-gray-300 flex items-center gap-2">
-            <SiYoutubeshorts />
-            Saved Shorts
+          <h2 className="text-2xl font-bold mb-6 pt-[50px] border-b border-gray-700 flex items-center gap-2">
+            <SiYoutubeshorts className="text-orange-500" /> Saved Shorts
           </h2>
-
           <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
             {savedShort.map((short) => (
               <div key={short?._id} className="flex-shrink-0">
@@ -118,14 +102,11 @@ function SavedContent() {
         </>
       )}
 
-      {/* Saved Videos */}
       {savedVideo.length > 0 && (
         <>
-          <h2 className="text-2xl font-bold mb-6 pt-[50px] border-b border-gray-300 flex items-center gap-2">
-            <GoVideo />
-            Saved Videos
+          <h2 className="text-2xl font-bold mb-6 pt-[50px] border-b border-gray-700 flex items-center gap-2">
+            <GoVideo /> Saved Videos
           </h2>
-
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {savedVideo.map((video) => (
               <VideoCard

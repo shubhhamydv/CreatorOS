@@ -1,3 +1,5 @@
+
+
 import React from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
@@ -25,6 +27,9 @@ import SavedPlaylist from './pages/Playlist/SavedPlaylist'
 import CreatePost from './pages/Post/CreatePost'
 
 import LikedContent from './pages/LikedContent'
+import SavedContent from './pages/SavedContent'
+import HistoryContent from './pages/HistoryContent'
+import Subscription from './pages/Subscription'
 import MobileProfile from './component/MobileProfile'
 
 import CustomAlert, { showCustomAlert } from './component/CustomAlert'
@@ -34,15 +39,15 @@ import GetChannelData from './customHooks/GetChannelData'
 import GetAllContentData from './customHooks/GetAllContentData'
 import GetSubscribedData from './customHooks/GetSubscribedData'
 import GetHistory from './customHooks/GetHistory'
+import GetRecommendedContent from './customHooks/GetRecommendedContent'
 
-export const serverUrl = "http://localhost:8000"
+export const serverUrl = ""
 
 const ProtectRoute = ({ userData, children }) => {
   if (!userData) {
     showCustomAlert("Please signup first to use this feature")
     return <Navigate to="/signin" replace />
   }
-
   return children
 }
 
@@ -58,142 +63,86 @@ function App() {
       <GetAllContentData />
       <GetSubscribedData />
       <GetHistory />
+      <GetRecommendedContent />
 
       <Routes>
 
         <Route path="/" element={<Home />}>
 
-          <Route
-            path="shorts"
-            element={
-              <ProtectRoute userData={userData}>
-                <Shorts />
-              </ProtectRoute>
-            }
-          />
+          <Route path="shorts" element={
+            <ProtectRoute userData={userData}><Shorts /></ProtectRoute>
+          } />
 
-          <Route
-            path="mobilepro"
-            element={
-              <ProtectRoute userData={userData}>
-                <MobileProfile />
-              </ProtectRoute>
-            }
-          />
+          <Route path="mobilepro" element={
+            <ProtectRoute userData={userData}><MobileProfile /></ProtectRoute>
+          } />
 
-          <Route
-            path="viewchannel"
-            element={
-              <ProtectRoute userData={userData}>
-                <ViewChannel />
-              </ProtectRoute>
-            }
-          />
+          <Route path="viewchannel" element={
+            <ProtectRoute userData={userData}><ViewChannel /></ProtectRoute>
+          } />
 
-          <Route
-            path="updatechannel"
-            element={
-              <ProtectRoute userData={userData}>
-                <UpdateChannel />
-              </ProtectRoute>
-            }
-          />
+          <Route path="updatechannel" element={
+            <ProtectRoute userData={userData}><UpdateChannel /></ProtectRoute>
+          } />
 
-          <Route
-            path="create"
-            element={
-              <ProtectRoute userData={userData}>
-                <CreatePage />
-              </ProtectRoute>
-            }
-          />
+          <Route path="create" element={
+            <ProtectRoute userData={userData}><CreatePage /></ProtectRoute>
+          } />
 
-          <Route
-            path="createvideo"
-            element={
-              <ProtectRoute userData={userData}>
-                <CreateVideo />
-              </ProtectRoute>
-            }
-          />
+          <Route path="createvideo" element={
+            <ProtectRoute userData={userData}><CreateVideo /></ProtectRoute>
+          } />
 
-          <Route
-            path="createshort"
-            element={
-              <ProtectRoute userData={userData}>
-                <CreateShort />
-              </ProtectRoute>
-            }
-          />
+          <Route path="createshort" element={
+            <ProtectRoute userData={userData}><CreateShort /></ProtectRoute>
+          } />
 
-          <Route
-            path="createplaylist"
-            element={
-              <ProtectRoute userData={userData}>
-                <CreatePlaylist />
-              </ProtectRoute>
-            }
-          />
+          <Route path="createplaylist" element={
+            <ProtectRoute userData={userData}><CreatePlaylist /></ProtectRoute>
+          } />
 
-          <Route
-            path="createpost"
-            element={
-              <ProtectRoute userData={userData}>
-                <CreatePost />
-              </ProtectRoute>
-            }
-          />
+          <Route path="createpost" element={
+            <ProtectRoute userData={userData}><CreatePost /></ProtectRoute>
+          } />
 
-          <Route
-            path="channelpage/:channelId"
-            element={
-              <ProtectRoute userData={userData}>
-                <ChannelPage />
-              </ProtectRoute>
-            }
-          />
+          <Route path="channelpage/:channelId" element={
+            <ProtectRoute userData={userData}><ChannelPage /></ProtectRoute>
+          } />
+
+          {/* These routes were MISSING — now added inside Home layout */}
+          <Route path="history" element={
+            <ProtectRoute userData={userData}><HistoryContent /></ProtectRoute>
+          } />
+
+          <Route path="savedcontent" element={
+            <ProtectRoute userData={userData}><SavedContent /></ProtectRoute>
+          } />
+
+          <Route path="subscription" element={
+            <ProtectRoute userData={userData}><Subscription /></ProtectRoute>
+          } />
 
         </Route>
 
-        <Route
-          path="/likedcontent"
-          element={
-            <ProtectRoute userData={userData}>
-              <LikedContent />
-            </ProtectRoute>
-          }
-        />
+        <Route path="/likedcontent" element={
+          <ProtectRoute userData={userData}><LikedContent /></ProtectRoute>
+        } />
 
-        <Route
-          path="/savedplaylist"
-          element={
-            <ProtectRoute userData={userData}>
-              <SavedPlaylist />
-            </ProtectRoute>
-          }
-        />
+        <Route path="/savedplaylist" element={
+          <ProtectRoute userData={userData}><SavedPlaylist /></ProtectRoute>
+        } />
 
         <Route path="/signup" element={<SignUp />} />
         <Route path="/signin" element={<SignIn />} />
         <Route path="/forgetpass" element={<ForgetPassword />} />
 
-        <Route
-          path="/createchannel"
-          element={
-            <ProtectRoute userData={userData}>
-              <CreateChannel />
-            </ProtectRoute>
-          }
-        />
+        <Route path="/createchannel" element={
+          <ProtectRoute userData={userData}><CreateChannel /></ProtectRoute>
+        } />
 
-        <Route
-          path="/playvideo/:videoId"
-          element={
-            <ProtectRoute userData={userData}>
-              <PlayVideo />
-            </ProtectRoute>
-          }
-        />
+        <Route path="/playvideo/:videoId" element={
+          <ProtectRoute userData={userData}><PlayVideo /></ProtectRoute>
+        } />
 
       </Routes>
     </>

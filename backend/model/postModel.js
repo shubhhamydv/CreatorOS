@@ -1,61 +1,76 @@
-import mongoose from "mongoose";
+import mongoose from "mongoose"
 
-const replySchema = new mongoose.Schema({
-
+const replySchema = new mongoose.Schema(
+  {
     author: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
     },
     message: {
-        type: String,
+      type: String,
+      required: true,
     },
-    createAt: { type: Date, default: Date.now },
-    updatedAt: { type: Date }
-}, { _id: time })
+    createdAt: {
+      type: Date,
+      default: Date.now,
+    },
+    updatedAt: {
+      type: Date,
+    },
+  },
+  { _id: true }
+)
 
-const commentSchema = new mongoose.Schema({
+const commentSchema = new mongoose.Schema(
+  {
     author: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
     },
     message: {
-        type: String,
+      type: String,
+      required: true,
     },
-    replies: {
-        replySchema
+    replies: [replySchema],
+    createdAt: {
+      type: Date,
+      default: Date.now,
     },
-    createAt: { type: Date, default: Date.now },
-    updatedAt: { type: Date }
-}, { _id: true })
+    updatedAt: {
+      type: Date,
+    },
+  },
+  { _id: true }
+)
 
-
-const postSchema = new mongoose.Schema({
+const postSchema = new mongoose.Schema(
+  {
     channel: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Channel",
-        required: true
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Channel",
+      required: true,
     },
     content: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
-    image:{
-        type:String
+    image: {
+      type: String,
+      default: "",
     },
-    like: [{
+    likes: [
+      {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
+      },
+    ],
+    comments: [commentSchema],
+  },
+  { timestamps: true }
+)
 
-    }],
+const Post = mongoose.model("Post", postSchema)
 
-    comments: {
-        commentSchema
-    }
-
-
-
-}, { timestamps: true })
-
-const Post = mongoose.model("post", postSchema)
-
-export default post
+export default Post

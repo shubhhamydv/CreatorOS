@@ -4,7 +4,6 @@ import { SiXiaohongshu } from 'react-icons/si'
 import { useDispatch } from 'react-redux'
 import { serverUrl } from '../App'
 import { setShortHistory, setUserData, setVideoHistory } from '../redux/userSlice'
-import Video from '../../../backend/model/videoModel'
 
 const GetHistory = () => {
   const dispatch = useDispatch()

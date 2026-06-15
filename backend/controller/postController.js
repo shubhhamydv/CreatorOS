@@ -1,104 +1,121 @@
-import uploadOnCloudinary from "../config/cloudinary"
+import uploadOnCloudinary from "../config/cloudinary.js"
+import Channel from "../model/channelModel.js"
+import Post from "../model/postModel.js"
 
+const getPopulatedPost = async (postId) => {
+  return await Post.findById(postId)
+    .populate("channel", "name avatar")
+    .populate({ path: "comments.author", select: "userName photoUrl" })
+    .populate({ path: "comments.replies.author", select: "userName photoUrl" })
+}
 
-export const CreatePost = async (req,res) => {
-    try {
-        const {channelId,content} = req.body
-        const file = req.file
-        if(!channelId || content){
-            return res.status(400).json({message:"channelId and content are required"}
-
-            )
-
-        }
-        let imageUrl = null
-        if(file){
-            imageUrl = await uploadOnCloudinary(file.path)
-        }
-        const post = await Post.create({
-            channelId,
-            content,
-            image:imageUrl,
-        })
-        await Channel.findByIdAndUpdate(channelId,{
-            $push :{community : post._id}
-        })
-        return res.status(201).json(post)
-    } catch (error) {
-        return res.status(500).json({message:`failed to create Post ${error}`})
-    }
-} 
-
-
-export const getAllPosts = async (req, res) => {
+// CREATE POST
+// Bug fixed: condition was "if(!channelId || content)" → "if (!channel || !content)"
+// Bug fixed: $push was "community" → "posts" (correct channelModel field)
+// Bug fixed: returns { post: populatedPost } consistently
+export const createPost = async (req, res) => {
   try {
-    const posts = await Post.find().sort({ createdAt: -1 }).populate("channel comments.author comments.replies.author")
-    if (!posts) return res.status(400).json({ message: "Posts are not found" })
-    return res.status(200).json({ posts })
+    const { channel, content } = req.body
+    const file = req.file
+
+    if (!channel || !content) {
+      return res.status(400).json({ message: "channel and content are required" })
+    }
+
+    let imageUrl = ""
+    if (file) {
+      imageUrl = await uploadOnCloudinary(file.path)
+    }
+
+    const post = await Post.create({ channel, content, image: imageUrl })
+    await Channel.findByIdAndUpdate(channel, { $push: { posts: post._id } })
+
+    const populatedPost = await getPopulatedPost(post._id)
+    return res.status(201).json({ post: populatedPost })
   } catch (error) {
-    return res.status(500).json({ message: `failed to get posts ${error}` })
+    return res.status(500).json({ message: `Failed to create Post: ${error.message}` })
   }
 }
 
+// GET ALL POSTS
+export const getAllPosts = async (req, res) => {
+  try {
+    const posts = await Post.find()
+      .sort({ createdAt: -1 })
+      .populate("channel", "name avatar")
+      .populate({ path: "comments.author", select: "userName photoUrl" })
+      .populate({ path: "comments.replies.author", select: "userName photoUrl" })
+
+    return res.status(200).json({ posts })
+  } catch (error) {
+    return res.status(500).json({ message: `Failed to get posts: ${error.message}` })
+  }
+}
+
+// TOGGLE LIKE
+// Bug fixed: was "Post.findById(videoId)" → postId
 export const toggleLikesForPost = async (req, res) => {
   try {
     const { postId } = req.body
     const userId = req.userId
-    const post = await Post.findById(videoId)
-    if (!post) return res.status(400).json({ message: "Post is not found" })
-    if (post.likes.includes(userId)) post.likes.pull(userId)
-    else { post.likes.push(userId);  }
+
+    const post = await Post.findById(postId)
+    if (!post) return res.status(404).json({ message: "Post not found" })
+
+    if (post.likes.includes(userId)) {
+      post.likes.pull(userId)
+    } else {
+      post.likes.push(userId)
+    }
+
     await post.save()
-    return res.status(200).json(post)
+    const populatedPost = await getPopulatedPost(postId)
+    return res.status(200).json({ post: populatedPost })
   } catch (error) {
-    return res.status(500).json({ message: `Failed to like post ${error}` })
+    return res.status(500).json({ message: `Failed to like post: ${error.message}` })
   }
 }
 
-
+// ADD COMMENT
+// Bug fixed: was "Post.findById(videoId)" → postId
+// Bug fixed: returns { post: populatedPost }
 export const addCommentForPost = async (req, res) => {
   try {
-    const { postId } = req.body
-    const { message } = req.body
+    const { postId, message } = req.body
     const userId = req.userId
-    const post = await Post.findById(videoId)
-    if (!post) return res.status(400).json({ message: "post is not found" })
-    post.comments.push({ author: userId, message })
-    await post.save()  // FIX: was missing
-    const populatePost = await Post.findById(postId)
-    .populate({
-        path:"comments.author",
-        select:"userName photoUrl email"
-    })
-    .populate({
-        path:"comments.replies author",
-        select:"userName photoUrl email"
-    })
 
-    return res.status(200).json(populatePost)
+    const post = await Post.findById(postId)
+    if (!post) return res.status(404).json({ message: "Post not found" })
+
+    post.comments.push({ author: userId, message })
+    await post.save()
+
+    const populatedPost = await getPopulatedPost(postId)
+    return res.status(200).json({ post: populatedPost })
   } catch (error) {
-    return res.status(500).json({ message: `error adding comments ${error}` })
+    return res.status(500).json({ message: `Error adding comment: ${error.message}` })
   }
 }
 
-
+// ADD REPLY
+// Bug fixed: was returning undefined variable "populatedPost" when named "populated"
 export const addReplyForPost = async (req, res) => {
   try {
-    const { postId, commentId } = req.body
-    const { message } = req.body
+    const { postId, commentId, message } = req.body
     const userId = req.userId
+
     const post = await Post.findById(postId)
-    if (!post) return res.status(400).json({ message: "Post is not found" })
+    if (!post) return res.status(404).json({ message: "Post not found" })
+
     const comment = post.comments.id(commentId)
-    if (!comment) return res.status(400).json({ message: "Comment is not found" })
+    if (!comment) return res.status(404).json({ message: "Comment not found" })
+
     comment.replies.push({ author: userId, message })
     await post.save()
-    const populated = await Post.findById(postId)
-      .populate({ path: "comments.author", select: "userName photoUrl email" })
-      .populate({ path: "comments.replies.author", select: "userName photoUrl email" })
-    return res.status(200).json(populatedPost)
+
+    const populatedPost = await getPopulatedPost(postId)
+    return res.status(200).json({ post: populatedPost })
   } catch (error) {
-    return res.status(500).json({ message: `error adding reply ${error}` })
+    return res.status(500).json({ message: `Error adding reply: ${error.message}` })
   }
 }
-
