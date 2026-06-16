@@ -112,7 +112,7 @@ function Profile() {
                     </button>
 
                     {userData?.channel && (
-                        <button className="flex items-center gap-3 px-4 py-2 hover:bg-gray-700">
+                        <button className="flex items-center gap-3 px-4 py-2 hover:bg-gray-700" onClick={() => navigate("/studio")}>
                             <SiYoutubestudio className='text-xl' />
                             PT Studio
                         </button>

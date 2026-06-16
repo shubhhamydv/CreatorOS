@@ -141,7 +141,7 @@ function MobileProfile() {
 
         <ProfileMenuItem icon={<FaThumbsUp />} text={"Liked Videos"} onClick={navigate("/likedcontent")}/>
 
-        <ProfileMenuItem icon={<SiYoutubestudio />} text={"PT Studio"} />
+        <ProfileMenuItem icon={<SiYoutubestudio />} text={"PT Studio"} onClick={() => navigate("/studio")} />
 
       </div>
 
