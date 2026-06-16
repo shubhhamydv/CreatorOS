@@ -2,9 +2,10 @@ import React, { useEffect, useState } from "react"
 import { useSelector } from "react-redux"
 import { SiYoutubeshorts } from "react-icons/si"
 import { GoVideo } from "react-icons/go"
+import { FaHistory } from "react-icons/fa"
 import ShortCard from "../component/ShortCard"
 import VideoCard from "../component/VideoCard"
- 
+
 const getVideoDuration = (url, callback) => {
   const video = document.createElement("video")
   video.preload = "metadata"
@@ -18,11 +19,11 @@ const getVideoDuration = (url, callback) => {
   video.onerror = () => { callback("0:00") }
   video.src = url
 }
- 
+
 function HistoryContent() {
   const { videoHistory, shortHistory } = useSelector((state) => state.user)
   const [durations, setDurations] = useState({})
- 
+
   useEffect(() => {
     if (Array.isArray(videoHistory) && videoHistory.length > 0) {
       videoHistory.forEach((video) => {
@@ -34,69 +35,96 @@ function HistoryContent() {
       })
     }
   }, [videoHistory])
- 
+
   const hasNoHistory =
     (!videoHistory || videoHistory.length === 0) &&
     (!shortHistory || shortHistory.length === 0)
- 
+
+  const totalCount = (videoHistory?.length || 0) + (shortHistory?.length || 0)
+
   if (hasNoHistory) {
     return (
-      <div className="flex justify-center items-center h-[70vh] bg-[#0f0f0f] text-gray-400 text-xl">
-        No History Found
+      <div className="flex flex-col justify-center items-center h-[70vh] bg-[#0f0f0f] text-gray-400 gap-4">
+        <FaHistory className="text-6xl text-gray-600" />
+        <p className="text-xl font-semibold">No Watch History Yet</p>
+        <p className="text-sm text-gray-500">Videos you watch will appear here.</p>
       </div>
     )
   }
- 
+
   return (
-    <div className="px-6 py-4 min-h-screen bg-[#0f0f0f] text-white mt-[50px] lg:mt-[20px]">
- 
-      {/* Shorts History */}
-      {shortHistory?.length > 0 && (
-        <>
-          <h2 className="text-2xl font-bold mb-6 pt-[50px] border-b border-gray-700 flex items-center gap-2">
-            <SiYoutubeshorts className="text-orange-500" /> Shorts History
-          </h2>
-          <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
-            {shortHistory.map((short) => (
-              <div key={short?._id} className="flex-shrink-0">
-                <ShortCard
-                  shortUrl={short?.shortUrl}
-                  title={short?.title}
-                  channelName={short?.channel?.name}
-                  views={short?.views}
-                  id={short?._id}
-                  avatar={short?.channel?.avatar}
+    <div className="min-h-screen bg-[#0f0f0f] text-white">
+
+      {/* Page Header */}
+      <div className="px-6 pt-6 pb-4 border-b border-gray-800 flex items-center gap-3">
+        <div className="w-9 h-9 bg-orange-500/20 rounded-full flex items-center justify-center">
+          <FaHistory className="text-orange-400 text-sm" />
+        </div>
+        <div>
+          <h1 className="text-xl font-bold">Watch History</h1>
+          <p className="text-xs text-gray-500">{totalCount} item{totalCount !== 1 ? "s" : ""}</p>
+        </div>
+      </div>
+
+      <div className="px-6 py-6 max-w-[1600px] mx-auto">
+
+        {/* Shorts History */}
+        {Array.isArray(shortHistory) && shortHistory.length > 0 && (
+          <section className="mb-10">
+            <div className="flex items-center gap-2 mb-5 pb-3 border-b border-gray-800">
+              <SiYoutubeshorts className="text-orange-500 text-xl" />
+              <h2 className="text-xl font-bold">Shorts History</h2>
+              <span className="ml-auto text-sm text-gray-500 bg-[#272727] px-3 py-0.5 rounded-full">
+                {shortHistory.length}
+              </span>
+            </div>
+            <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
+              {shortHistory.map((short) => (
+                <div key={short?._id} className="flex-shrink-0">
+                  <ShortCard
+                    shortUrl={short?.shortUrl}
+                    title={short?.title}
+                    channelName={short?.channel?.name}
+                    views={short?.views}
+                    id={short?._id}
+                    avatar={short?.channel?.avatar}
+                  />
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Video History */}
+        {Array.isArray(videoHistory) && videoHistory.length > 0 && (
+          <section>
+            <div className="flex items-center gap-2 mb-5 pb-3 border-b border-gray-800">
+              <GoVideo className="text-orange-500 text-xl" />
+              <h2 className="text-xl font-bold">Videos History</h2>
+              <span className="ml-auto text-sm text-gray-500 bg-[#272727] px-3 py-0.5 rounded-full">
+                {videoHistory.length}
+              </span>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {videoHistory.map((video) => (
+                <VideoCard
+                  key={video?._id}
+                  thumbnail={video?.thumbnail}
+                  duration={durations[video?._id] || "0:00"}
+                  channelLogo={video?.channel?.avatar}
+                  title={video?.title}
+                  channelName={video?.channel?.name}
+                  views={video?.views}
+                  id={video?._id}
                 />
-              </div>
-            ))}
-          </div>
-        </>
-      )}
- 
-      {/* Video History */}
-      {videoHistory?.length > 0 && (
-        <>
-          <h2 className="text-2xl font-bold mb-6 pt-[50px] border-b border-gray-700 flex items-center gap-2">
-            <GoVideo /> Videos History
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {videoHistory.map((video) => (
-              <VideoCard
-                key={video?._id}
-                thumbnail={video?.thumbnail}
-                duration={durations[video?._id] || "0:00"}
-                channelLogo={video?.channel?.avatar}
-                title={video?.title}
-                channelName={video?.channel?.name}
-                views={video?.views}
-                id={video?._id}
-              />
-            ))}
-          </div>
-        </>
-      )}
+              ))}
+            </div>
+          </section>
+        )}
+
+      </div>
     </div>
   )
 }
- 
+
 export default HistoryContent

@@ -25,6 +25,9 @@ import SavedPlaylist from './pages/Playlist/SavedPlaylist'
 import CreatePost from './pages/Post/CreatePost'
 
 import LikedContent from './pages/LikedContent'
+import SavedContent from './pages/SavedContent'
+import HistoryContent from './pages/HistoryContent'
+import Subscription from './pages/Subscription'
 import MobileProfile from './component/MobileProfile'
 import PTStudio from './pages/PTStudio'
 
@@ -155,6 +158,44 @@ function App() {
             }
           />
 
+          {/* These pages are navigated to as /subscription, /history, /savedcontent
+              They must be nested under Home so they render inside the sidebar/navbar layout */}
+          <Route
+            path="subscription"
+            element={
+              <ProtectRoute userData={userData}>
+                <Subscription />
+              </ProtectRoute>
+            }
+          />
+
+          <Route
+            path="history"
+            element={
+              <ProtectRoute userData={userData}>
+                <HistoryContent />
+              </ProtectRoute>
+            }
+          />
+
+          <Route
+            path="savedcontent"
+            element={
+              <ProtectRoute userData={userData}>
+                <SavedContent />
+              </ProtectRoute>
+            }
+          />
+
+          <Route
+            path="savedplaylist"
+            element={
+              <ProtectRoute userData={userData}>
+                <SavedPlaylist />
+              </ProtectRoute>
+            }
+          />
+
         </Route>
 
         <Route
@@ -162,15 +203,6 @@ function App() {
           element={
             <ProtectRoute userData={userData}>
               <LikedContent />
-            </ProtectRoute>
-          }
-        />
-
-        <Route
-          path="/savedplaylist"
-          element={
-            <ProtectRoute userData={userData}>
-              <SavedPlaylist />
             </ProtectRoute>
           }
         />
