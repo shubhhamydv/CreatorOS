@@ -41,7 +41,7 @@ import GetSubscribedData from './customHooks/GetSubscribedData'
 import GetHistory from './customHooks/GetHistory'
 import GetRecommendedContent from './customHooks/GetRecommendedContent'
 
-export const serverUrl = ""
+export const serverUrl = "https://creatoros-1-3i8l.onrender.com"
 
 const ProtectRoute = ({ userData, children }) => {
   if (!userData) {
