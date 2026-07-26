@@ -14,8 +14,6 @@ import cors from "cors";
 import userRouter from "./route/userRoute.js";
 import contentRouter from "./route/contentRoute.js";
 
-
-
 const port = process.env.PORT || 8000;
 
 const app = express();
@@ -25,6 +23,7 @@ app.use(express.json());
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
 app.use("/public", express.static(path.join(__dirname, "public")));
 
 app.use(cors({
@@ -36,13 +35,15 @@ app.use(cors({
             "http://localhost:5175",
             "http://127.0.0.1:5173",
             "http://127.0.0.1:5174",
-            "http://127.0.0.1:5175"
+            "http://127.0.0.1:5175",
+
+           "https://creatoros-2-jo02.onrender.com"
         ];
 
         if (!origin || allowedOrigins.includes(origin)) {
             callback(null, true);
         } else {
-            callback(new Error("Not allowed by CORS"), false);
+            callback(new Error("Not allowed by CORS"));
         }
     },
     credentials: true
@@ -53,6 +54,6 @@ app.use("/api/user", userRouter);
 app.use("/api/content", contentRouter);
 
 app.listen(port, () => {
-    console.log("server started");
+    console.log("Server started");
     connectDb();
 });
